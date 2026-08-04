@@ -1,48 +1,54 @@
 classDiagram
-    %% ===================== DJANGO.CONTRIB.AUTH (framework, não implementado pelo projeto) =====================
-    class AbstractUser {
-        <<abstract>>
-        +AutoField id
-        +CharField username
-        +CharField password
-        +CharField first_name
-        +CharField last_name
-        +EmailField email
-        +BooleanField is_staff
-        +BooleanField is_active
-        +BooleanField is_superuser
-        +DateTimeField last_login
-        +DateTimeField date_joined
+    namespace django_contrib_auth {
+        class User {
+            +AutoField id
+            +CharField username
+            +CharField password
+            +CharField first_name
+            +CharField last_name
+            +EmailField email
+            +BooleanField is_staff
+            +BooleanField is_active
+            +BooleanField is_superuser
+            +DateTimeField last_login
+            +DateTimeField date_joined
+        }
+
+        class Group {
+            +AutoField id
+            +CharField name
+        }
+
+        class Permission {
+            +AutoField id
+            +CharField name
+            +CharField codename
+            +ForeignKey content_type
+        }
     }
 
-    class Group {
-        +AutoField id
-        +CharField name
-    }
-
-    class Permission {
-        +AutoField id
-        +CharField name
-        +CharField codename
-        +ForeignKey content_type
-    }
-
-    AbstractUser "0..n" -- "0..n" Group : groups
-    AbstractUser "0..n" -- "0..n" Permission : user_permissions
+    User "0..n" -- "0..n" Group : groups
+    User "0..n" -- "0..n" Permission : user_permissions
     Group "0..n" -- "0..n" Permission : permissions
 
     %% ===================== DOMÍNIO SAVEPET =====================
     class Usuario {
-        <<AUTH_USER_MODEL>>
         +CharField cpf
-        +TextField endereco
-        +CharField tipo
+        +CharField telefone
+        +CharField tipo "tutor/administrador"
+        +CharField cep
+        +CharField logradouro
+        +CharField numero
+        +CharField complemento
+        +CharField bairro
+        +CharField cidade
+        +CharField estado
         +criar()$ Usuario
         +listar()$ list
         +atualizar() void
         +desativar() void
     }
-    AbstractUser <|-- Usuario : herda
+    User <|-- Usuario : herda
 
     class Pet {
         +AutoField id
@@ -52,23 +58,18 @@ classDiagram
         +CharField sexo
         +DateField data_nascimento
         +CharField pelagem
+        +FloatField peso
         +ImageField foto
+        +TextField alergias
+        +TextField doencas
+        +TextField medicamentos
+        +TextField observacoes
+        +DateTimeField data_atualizacao_saude
         +ForeignKey usuario_id
         +criar()$ Pet
         +listar()$ list
         +atualizar() void
         +excluir() void
-    }
-
-    class Registro_Saude {
-        +AutoField id
-        +ForeignKey pet_id
-        +TextField alergias
-        +TextField doencas
-        +TextField medicamentos
-        +TextField observacoes
-        +DateTimeField data_atualizacao
-        +atualizar() void
     }
 
     class Registro_Vacina {
@@ -84,28 +85,6 @@ classDiagram
         +listar()$ list
         +atualizar() void
         +excluir() void
-    }
-
-    class Rastreador {
-        +AutoField id
-        +ForeignKey pet_id
-        +CharField identificador
-        +CharField modelo
-        +DateTimeField data_vinculacao
-        +criar()$ Rastreador
-        +listar()$ list
-        +atualizar() void
-        +excluir() void
-    }
-
-    class Localizacao {
-        +AutoField id
-        +ForeignKey rastreador_id
-        +FloatField latitude
-        +FloatField longitude
-        +DateTimeField timestamp
-        +criar()$ Localizacao
-        +listar()$ list
     }
 
     class Categoria {
@@ -134,8 +113,5 @@ classDiagram
 
     Usuario "1" -- "0..n" Pet : possui
     Usuario "1" -- "0..n" Artigo_Blog : gerencia
-    Pet "1" -- "1" Registro_Saude : possui
     Pet "1" -- "0..n" Registro_Vacina : possui
-    Pet "1" -- "0..1" Rastreador : vincula
-    Rastreador "1" -- "0..n" Localizacao : gera
     Categoria "1" -- "0..n" Artigo_Blog : detem
