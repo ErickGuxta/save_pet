@@ -1,5 +1,5 @@
 classDiagram
-    %% ===================== DJANGO.CONTRIB.AUTH =====================
+    %% ===================== DJANGO.CONTRIB.AUTH (framework, não implementado pelo projeto) =====================
     class AbstractUser {
         <<abstract>>
         +AutoField id
@@ -23,6 +23,7 @@ classDiagram
     class Permission {
         +AutoField id
         +CharField name
+        +CharField codename
         +ForeignKey content_type
     }
 
@@ -36,6 +37,10 @@ classDiagram
         +CharField cpf
         +TextField endereco
         +CharField tipo
+        +criar()$ Usuario
+        +listar()$ list
+        +atualizar() void
+        +desativar() void
     }
     AbstractUser <|-- Usuario : herda
 
@@ -49,6 +54,10 @@ classDiagram
         +CharField pelagem
         +ImageField foto
         +ForeignKey usuario_id
+        +criar()$ Pet
+        +listar()$ list
+        +atualizar() void
+        +excluir() void
     }
 
     class Registro_Saude {
@@ -59,6 +68,7 @@ classDiagram
         +TextField medicamentos
         +TextField observacoes
         +DateTimeField data_atualizacao
+        +atualizar() void
     }
 
     class Registro_Vacina {
@@ -70,6 +80,10 @@ classDiagram
         +DateField data_reforco
         +CharField veterinario
         +CharField clinica
+        +criar()$ Registro_Vacina
+        +listar()$ list
+        +atualizar() void
+        +excluir() void
     }
 
     class Rastreador {
@@ -78,6 +92,10 @@ classDiagram
         +CharField identificador
         +CharField modelo
         +DateTimeField data_vinculacao
+        +criar()$ Rastreador
+        +listar()$ list
+        +atualizar() void
+        +excluir() void
     }
 
     class Localizacao {
@@ -86,12 +104,18 @@ classDiagram
         +FloatField latitude
         +FloatField longitude
         +DateTimeField timestamp
+        +criar()$ Localizacao
+        +listar()$ list
     }
 
     class Categoria {
         +AutoField id
         +CharField nome
         +TextField descricao
+        +criar()$ Categoria
+        +listar()$ list
+        +atualizar() void
+        +excluir() void
     }
 
     class Artigo_Blog {
@@ -102,6 +126,10 @@ classDiagram
         +TextField conteudo
         +DateTimeField data_publicacao
         +DateTimeField data_atualizacao
+        +criar()$ Artigo_Blog
+        +listar()$ list
+        +atualizar() void
+        +excluir() void
     }
 
     Usuario "1" -- "0..n" Pet : possui
