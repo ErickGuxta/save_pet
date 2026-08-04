@@ -1,0 +1,113 @@
+classDiagram
+    %% ===================== DJANGO.CONTRIB.AUTH =====================
+    class AbstractUser {
+        <<abstract>>
+        +AutoField id
+        +CharField username
+        +CharField password
+        +CharField first_name
+        +CharField last_name
+        +EmailField email
+        +BooleanField is_staff
+        +BooleanField is_active
+        +BooleanField is_superuser
+        +DateTimeField last_login
+        +DateTimeField date_joined
+    }
+
+    class Group {
+        +AutoField id
+        +CharField name
+    }
+
+    class Permission {
+        +AutoField id
+        +CharField name
+        +ForeignKey content_type
+    }
+
+    AbstractUser "0..n" -- "0..n" Group : groups
+    AbstractUser "0..n" -- "0..n" Permission : user_permissions
+    Group "0..n" -- "0..n" Permission : permissions
+
+    %% ===================== DOMÍNIO SAVEPET =====================
+    class Usuario {
+        <<AUTH_USER_MODEL>>
+        +CharField cpf
+        +TextField endereco
+        +CharField tipo
+    }
+    AbstractUser <|-- Usuario : herda
+
+    class Pet {
+        +AutoField id
+        +CharField nome
+        +CharField especie
+        +CharField raca
+        +CharField sexo
+        +DateField data_nascimento
+        +CharField pelagem
+        +ImageField foto
+        +ForeignKey usuario_id
+    }
+
+    class Registro_Saude {
+        +AutoField id
+        +ForeignKey pet_id
+        +TextField alergias
+        +TextField doencas
+        +TextField medicamentos
+        +TextField observacoes
+        +DateTimeField data_atualizacao
+    }
+
+    class Registro_Vacina {
+        +AutoField id
+        +ForeignKey pet_id
+        +CharField nome_vacina
+        +CharField lote
+        +DateField data_aplicacao
+        +DateField data_reforco
+        +CharField veterinario
+        +CharField clinica
+    }
+
+    class Rastreador {
+        +AutoField id
+        +ForeignKey pet_id
+        +CharField identificador
+        +CharField modelo
+        +DateTimeField data_vinculacao
+    }
+
+    class Localizacao {
+        +AutoField id
+        +ForeignKey rastreador_id
+        +FloatField latitude
+        +FloatField longitude
+        +DateTimeField timestamp
+    }
+
+    class Categoria {
+        +AutoField id
+        +CharField nome
+        +TextField descricao
+    }
+
+    class Artigo_Blog {
+        +AutoField id
+        +ForeignKey usuario_id
+        +ForeignKey categoria_id
+        +CharField titulo
+        +TextField conteudo
+        +DateTimeField data_publicacao
+        +DateTimeField data_atualizacao
+    }
+
+    Usuario "1" -- "0..n" Pet : possui
+    Usuario "1" -- "0..n" Artigo_Blog : gerencia
+    Pet "1" -- "1" Registro_Saude : possui
+    Pet "1" -- "0..n" Registro_Vacina : possui
+    Pet "1" -- "0..1" Rastreador : vincula
+    Rastreador "1" -- "0..n" Localizacao : gera
+    Categoria "1" -- "0..n" Artigo_Blog : detem
