@@ -20,13 +20,12 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/'           , admin.site.urls),
 
-   # path(''                 , views.dashboard, name="dashboard"),
+    # path(''                 , views.dashboard, name="dashboard"),
     path('access/'          , include("django.contrib.auth.urls")),
 
     # path('painel-admin/'    , include("_apps.adminpanel.urls")),
     # path('users/'           , include("_apps.accounts.urls")),
-    # path('pets/'            , include("_apps.pets.urls")),
-    # path('vaccines/'        , include("_apps.vaccines.urls")),
-    # path('locator/'         , include("_apps.locator.urls")),
+    path('pets/'            , include("_apps.pets.urls")),
+    path('vaccines/'        , include("_apps.vaccines.urls")),
     # path('blog/'            , include("_apps.blog.urls")),
 ]
