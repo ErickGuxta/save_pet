@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Excluir Conta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <main class="container py-4">
+        <h1 class="h3 mb-4">Excluir Conta</h1>
+
+        <p>Deseja excluir sua conta?</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Excluir</button>
+            <a href="{% url 'accounts:detail' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </main>
+</body>
+</html>

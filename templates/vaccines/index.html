@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vacinas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Vacinas</h1>
+            <div>
+                <a href="{% url 'pets:index' %}" class="btn btn-outline-secondary">Pets</a>
+                <a href="{% url 'vaccines:create' %}" class="btn btn-primary">Nova vacina</a>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Pet</th>
+                    <th>Aplicação</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vaccine in vaccines %}
+                    <tr>
+                        <td>{{ vaccine.nome }}</td>
+                        <td>{{ vaccine.pet.nome }}</td>
+                        <td>{{ vaccine.data_aplicacao|date:"d/m/Y" }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'vaccines:detail' vaccine.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <a href="{% url 'vaccines:edit' vaccine.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <a href="{% url 'vaccines:delete' vaccine.id %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">Nenhuma vacina cadastrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ pet.nome }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">{{ pet.nome }}</h1>
+            <a href="{% url 'pets:index' %}" class="btn btn-outline-secondary">Voltar</a>
+        </div>
+
+        <dl class="row">
+            <dt class="col-sm-3">Espécie</dt>
+            <dd class="col-sm-9">{{ pet.especie }}</dd>
+            <dt class="col-sm-3">Raça</dt>
+            <dd class="col-sm-9">{{ pet.raca }}</dd>
+            <dt class="col-sm-3">Sexo</dt>
+            <dd class="col-sm-9">{{ pet.sexo }}</dd>
+            <dt class="col-sm-3">Nascimento</dt>
+            <dd class="col-sm-9">{{ pet.data_nascimento|date:"d/m/Y" }}</dd>
+            <dt class="col-sm-3">Peso</dt>
+            <dd class="col-sm-9">{{ pet.peso }}</dd>
+        </dl>
+
+        <a href="{% url 'pets:edit' pet.id %}" class="btn btn-primary">Editar</a>
+    </main>
+</body>
+</html>

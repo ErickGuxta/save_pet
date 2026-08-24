@@ -1,12 +1,33 @@
+# ============================================================
+# O app vaccines cuida:
+#
+#   - cadastro de vacinas;
+#   - listagem de vacinas do tutor logado;
+#   - edição, detalhe e exclusão de vacinas.
+# ============================================================
+
+# ============================================================
+# Imports
+# ============================================================
+
+# importando shortcuts para renderização, busca e redirecionamento
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+# importando formulário e model de vacinas
 from .forms  import VaccineForm
 from .models import Vaccine
 
 
-#Listar Registros de Vacinas
+# ============================================================
+# Vacinas
+# ============================================================
+
+# Listar registros de vacinas
+@login_required
 def vaccines(request):
+    # lista apenas as vacinas do usuário logado
     vaccines = Vaccine.objects.filter(usuario=request.user).select_related("pet")
 
     context = {
@@ -16,7 +37,10 @@ def vaccines(request):
     return render(request, "vaccines/index.html", context)
 
 
+# Detalhar vacina
+@login_required
 def detail(request, id):
+    # busca a vacina pelo ID e garante que pertence ao usuário logado
     vaccine = get_object_or_404(Vaccine, id=id, usuario=request.user)
 
     context = {
@@ -26,21 +50,25 @@ def detail(request, id):
     return render(request, "vaccines/detail.html", context)
 
 
-#Criar Registro Vacina
+# Criar registro de vacina
+@login_required
 def create(request):
+    # instanciando a metaclasse VaccineForm filtrando pets do usuário logado
     form = VaccineForm(user=request.user)
 
     if request.method == "POST":
+        # recebendo os dados enviados pelo formulário
         form = VaccineForm(request.POST, user=request.user)
 
         if form.is_valid():
+            # salva a vacina com vínculo ao usuário logado
             vaccine = form.save(commit=False)
             vaccine.usuario = request.user
 
             vaccine.save()
             messages.success(request, "Vacina cadastrada com sucesso.")
             return redirect("vaccines:index")
-        #se não for válido renderiza a tela de criar novamente
+        # se não for válido renderiza a tela de criar novamente
         else:
             context = {
                 "form": form
@@ -54,13 +82,16 @@ def create(request):
     return render(request, "vaccines/create.html", context)
 
 
-#Editar Registro vacina
+# Editar registro de vacina
+@login_required
 def edit(request, id):
 
+    # busca a vacina que será editada
     vaccine = get_object_or_404(Vaccine, id=id, usuario=request.user)
     form = VaccineForm(instance=vaccine, user=request.user)
 
     if request.method == "POST":
+        # atualiza a vacina com os dados enviados no formulário
         form = VaccineForm(request.POST, instance=vaccine, user=request.user)
 
         if form.is_valid():
@@ -81,8 +112,10 @@ def edit(request, id):
 
 
 
-#Excluir Registro vacina
+# Excluir registro de vacina
+@login_required
 def delete(request, id):
+    # busca e exclui a vacina informada na URL
     vaccine = get_object_or_404(Vaccine, id=id, usuario=request.user)
     vaccine.delete()
     messages.success(request, "Vacina excluída com sucesso.")

@@ -1,7 +1,7 @@
 from django import forms
 
-from apps.pets.models import Pet
-from apps.vaccines.models import Vaccine
+from _apps.pets.models import Pet
+from _apps.vaccines.models import Vaccine
 
 
 class VaccineForm(forms.ModelForm):

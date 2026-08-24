@@ -1,7 +1,7 @@
 from django import forms
 
 #importar model de pets
-from apps.pets.models import Pet
+from _apps.pets.models import Pet
 
 
 class PetForm(forms.ModelForm):
