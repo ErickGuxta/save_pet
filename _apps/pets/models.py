@@ -20,7 +20,7 @@ class Pet(models.Model):
     raca                = models.CharField(max_length=50)
     data_nascimento     = models.DateField()
     pelagem             = models.CharField(max_length=50)
-    peso                = models.DecimalField(max_digits=10, decimal_places=2)
+    peso                = models.FloatField()
     foto                = models.ImageField(upload_to="pets/fotos/", blank=True, null=True)
     alergias            = models.TextField(blank=True)
     doencas             = models.TextField(blank=True)

@@ -34,7 +34,7 @@
             <tbody>
                 {% for vaccine in vaccines %}
                     <tr>
-                        <td>{{ vaccine.nome }}</td>
+                        <td>{{ vaccine.nome_vacina }}</td>
                         <td>{{ vaccine.pet.nome }}</td>
                         <td>{{ vaccine.data_aplicacao|date:"d/m/Y" }}</td>
                         <td class="text-end">

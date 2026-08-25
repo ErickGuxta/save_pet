@@ -1,14 +1,14 @@
 from django import forms
 
 from _apps.pets.models import Pet
-from _apps.vaccines.models import Vaccine
+from _apps.vaccines.models import RegistroVacina
 
 
 class VaccineForm(forms.ModelForm):
     class Meta:
-        model = Vaccine
+        model = RegistroVacina
         fields = [
-            "nome",
+            "nome_vacina",
             "lote",
             "data_aplicacao",
             "data_reforco",
