@@ -19,11 +19,11 @@ class VaccineForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
+        dono = kwargs.pop("dono", None)
         super().__init__(*args, **kwargs)
 
-        if user is not None:
-            self.fields["pet"].queryset = Pet.objects.filter(usuario=user)
+        if dono is not None:
+            self.fields["pet"].queryset = Pet.objects.filter(dono=dono)
 
         for field in self.fields.values():
             field.widget.attrs.update({"class": "form-control"})

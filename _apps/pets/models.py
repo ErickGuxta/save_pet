@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from _apps.accounts.models import Dono
 # Create your models here.
 
 class Pet(models.Model):
@@ -27,8 +27,8 @@ class Pet(models.Model):
     medicamentos        = models.TextField(blank=True)
     observacoes         = models.TextField(blank=True)
 
-    usuario             = models.ForeignKey(
-        User, 
+    dono                = models.ForeignKey(
+        Dono,
         on_delete=models.CASCADE, 
         related_name="pets"
         )

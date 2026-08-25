@@ -4,17 +4,13 @@
 
 # importando forms do Django e formulários prontos de autenticação
 from django import forms
-from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-# importando model de perfil do tutor
-from _apps.accounts.models import Usuario
-
-User = get_user_model()
+from _apps.accounts.models import Dono
 
 
 # ============================================================
-# Cadastro público de usuário
+# Cadastro público de dono
 # ============================================================
 
 class PublicUserForm(UserCreationForm):
@@ -23,7 +19,7 @@ class PublicUserForm(UserCreationForm):
     email = forms.EmailField(label="E-mail")
 
     class Meta:
-        model = User
+        model = Dono
         fields = [
             "username",
             "first_name",
@@ -54,15 +50,15 @@ class LoginForm(AuthenticationForm):
 
 
 # ============================================================
-# Perfil do tutor
+# Dados do tutor
 # ============================================================
 
-class PerfilUsuarioForm(forms.Form):
+class PerfilDonoForm(forms.Form):
     # campos do User
     nome = forms.CharField(max_length=150)
     email = forms.EmailField()
 
-    # campos do perfil Usuario
+    # campos cadastrais do Dono
     cpf = forms.CharField(label="CPF", max_length=14, required=False)
     telefone = forms.CharField(max_length=20, required=False)
     cep = forms.CharField(label="CEP", max_length=9, required=False)
@@ -76,23 +72,23 @@ class PerfilUsuarioForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # o user é enviado pela view para carregar os dados já cadastrados
         user = kwargs.pop("user", None)
+        dono = kwargs.pop("dono", None)
         super().__init__(*args, **kwargs)
 
         if user is not None:
-            # preenche o formulário com dados do User e do perfil Usuario
-            perfil, _ = Usuario.objects.get_or_create(user=user)
             self.fields["nome"].initial = user.first_name
             self.fields["email"].initial = user.email
-            self.fields["cpf"].initial = perfil.cpf
-            self.fields["telefone"].initial = perfil.telefone
-            self.fields["cep"].initial = perfil.cep
-            self.fields["logradouro"].initial = perfil.logradouro
-            self.fields["numero"].initial = perfil.numero
-            self.fields["complemento"].initial = perfil.complemento
-            self.fields["bairro"].initial = perfil.bairro
-            self.fields["cidade"].initial = perfil.cidade
-            self.fields["estado"].initial = perfil.estado
+
+        if dono is not None:
+            self.fields["cpf"].initial = dono.cpf
+            self.fields["telefone"].initial = dono.telefone
+            self.fields["cep"].initial = dono.cep
+            self.fields["logradouro"].initial = dono.logradouro
+            self.fields["numero"].initial = dono.numero
+            self.fields["complemento"].initial = dono.complemento
+            self.fields["bairro"].initial = dono.bairro
+            self.fields["cidade"].initial = dono.cidade
+            self.fields["estado"].initial = dono.estado
 
         for field in self.fields.values():
             field.widget.attrs.update({"class": "form-control"})
-

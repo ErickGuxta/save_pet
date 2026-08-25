@@ -18,6 +18,8 @@ from django.contrib.auth.decorators import login_required
 # importando formulário e model de vacinas
 from .forms  import VaccineForm
 from .models import RegistroVacina
+from _apps.accounts.models import Dono
+
 
 
 # ============================================================
@@ -28,8 +30,9 @@ from .models import RegistroVacina
 @login_required
 def vaccines(request):
     # lista apenas as vacinas do usuário logado
+    dono = get_object_or_404(Dono, pk=request.user.pk)
     vaccines = RegistroVacina.objects.filter(
-        pet__usuario=request.user
+        pet__dono=dono
     ).select_related("pet")
 
     context = {
@@ -43,10 +46,11 @@ def vaccines(request):
 @login_required
 def detail(request, id):
     # busca a vacina pelo ID e garante que pertence ao usuário logado
+    dono = get_object_or_404(Dono, pk=request.user.pk)
     vaccine = get_object_or_404(
         RegistroVacina,
         id=id,
-        pet__usuario=request.user,
+        pet__dono=dono,
     )
 
     context = {
@@ -60,11 +64,12 @@ def detail(request, id):
 @login_required
 def create(request):
     # instanciando a metaclasse VaccineForm filtrando pets do usuário logado
-    form = VaccineForm(user=request.user)
+    dono = get_object_or_404(Dono, pk=request.user.pk)
+    form = VaccineForm(dono=dono)
 
     if request.method == "POST":
         # recebendo os dados enviados pelo formulário
-        form = VaccineForm(request.POST, user=request.user)
+        form = VaccineForm(request.POST, dono=dono)
 
         if form.is_valid():
             # salva a vacina com vínculo ao usuário logado
@@ -90,16 +95,17 @@ def create(request):
 def edit(request, id):
 
     # busca a vacina que será editada
+    dono = get_object_or_404(Dono, pk=request.user.pk)
     vaccine = get_object_or_404(
         RegistroVacina,
         id=id,
-        pet__usuario=request.user,
+        pet__dono=dono,
     )
-    form = VaccineForm(instance=vaccine, user=request.user)
+    form = VaccineForm(instance=vaccine, dono=dono)
 
     if request.method == "POST":
         # atualiza a vacina com os dados enviados no formulário
-        form = VaccineForm(request.POST, instance=vaccine, user=request.user)
+        form = VaccineForm(request.POST, instance=vaccine, dono=dono)
 
         if form.is_valid():
             form.save()
@@ -123,10 +129,11 @@ def edit(request, id):
 @login_required
 def delete(request, id):
     # busca e exclui a vacina informada na URL
+    dono = get_object_or_404(Dono, pk=request.user.pk)
     vaccine = get_object_or_404(
         RegistroVacina,
         id=id,
-        pet__usuario=request.user,
+        pet__dono=dono,
     )
     vaccine.delete()
     messages.success(request, "Vacina excluída com sucesso.")

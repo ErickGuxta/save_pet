@@ -1,6 +1,7 @@
-from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from _apps.accounts.models import Dono
+
 
 
 class Categoria(models.Model):
@@ -17,9 +18,8 @@ class Categoria(models.Model):
 
 
 class ArtigoBlog(models.Model):
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-
+    dono = models.ForeignKey(
+        Dono,
         on_delete    =models.CASCADE,
         related_name ="artigos_blog",
     )

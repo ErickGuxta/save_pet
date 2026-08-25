@@ -18,6 +18,8 @@ from django.contrib.auth.decorators import login_required
 # importando formulário e model de pets
 from .forms import PetForm
 from .models import Pet
+from _apps.accounts.models import Dono
+
 
 
 # ============================================================
@@ -28,7 +30,8 @@ from .models import Pet
 @login_required
 def pets(request):
     # lista apenas os pets do usuário logado
-    pets = Pet.objects.filter(usuario=request.user)
+    dono = get_object_or_404(Dono, pk=request.user.pk)
+    pets = Pet.objects.filter(dono=dono)
 
     context = {
         "pets": pets,
@@ -40,10 +43,11 @@ def pets(request):
 @login_required
 def detail(request, id):
     # busca o pet pelo ID e garante que pertence ao usuário logado
+    dono = get_object_or_404(Dono, pk=request.user.pk)
     pet = get_object_or_404(
         Pet.objects.prefetch_related("vacinas"),
         id=id,
-        usuario=request.user,
+        dono=dono,
     )
 
     context = {
@@ -57,6 +61,7 @@ def detail(request, id):
 @login_required
 def create(request):
     # instanciando a metaclasse PetForm
+    dono = get_object_or_404(Dono, pk=request.user.pk)
     form = PetForm()
 
     if request.method == "POST":
@@ -66,7 +71,7 @@ def create(request):
         if form.is_valid():
             # salva o pet com vínculo ao usuário logado
             pet = form.save(commit=False)
-            pet.usuario = request.user
+            pet.dono = dono
 
             pet.save()
             messages.success(request, "Pet cadastrado com sucesso.")
@@ -89,7 +94,8 @@ def create(request):
 def edit(request, id):
 
     # busca o pet que será editado
-    pet = get_object_or_404(Pet, id=id, usuario=request.user)
+    dono = get_object_or_404(Dono, pk=request.user.pk)
+    pet = get_object_or_404(Pet, id=id, dono=dono)
     form = PetForm(instance=pet)
 
     if request.method == "POST":
@@ -117,7 +123,8 @@ def edit(request, id):
 @login_required
 def delete(request, id):
     # busca e exclui o pet informado na URL
-    pet = get_object_or_404(Pet, id=id, usuario=request.user)
+    dono = get_object_or_404(Dono, pk=request.user.pk)
+    pet = get_object_or_404(Pet, id=id, dono=dono)
     pet.delete()
     messages.success(request, "Pet excluído com sucesso.")
     return redirect("pets:index")

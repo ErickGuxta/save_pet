@@ -14,20 +14,20 @@
         </div>
 
         <dl class="row">
-            <dt class="col-sm-3">Usuário</dt>
+            <dt class="col-sm-3">Dono</dt>
             <dd class="col-sm-9">{{ request.user.username }}</dd>
             <dt class="col-sm-3">Nome</dt>
             <dd class="col-sm-9">{{ request.user.first_name }}</dd>
             <dt class="col-sm-3">E-mail</dt>
             <dd class="col-sm-9">{{ request.user.email }}</dd>
             <dt class="col-sm-3">CPF</dt>
-            <dd class="col-sm-9">{{ perfil.cpf|default:"-" }}</dd>
+            <dd class="col-sm-9">{{ dono.cpf|default:"-" }}</dd>
             <dt class="col-sm-3">Telefone</dt>
-            <dd class="col-sm-9">{{ perfil.telefone|default:"-" }}</dd>
+            <dd class="col-sm-9">{{ dono.telefone|default:"-" }}</dd>
             <dt class="col-sm-3">Cidade</dt>
-            <dd class="col-sm-9">{{ perfil.cidade|default:"-" }}</dd>
+            <dd class="col-sm-9">{{ dono.cidade|default:"-" }}</dd>
             <dt class="col-sm-3">Estado</dt>
-            <dd class="col-sm-9">{{ perfil.estado|default:"-" }}</dd>
+            <dd class="col-sm-9">{{ dono.estado|default:"-" }}</dd>
         </dl>
 
         <a href="{% url 'accounts:edit' %}" class="btn btn-primary">Editar</a>
