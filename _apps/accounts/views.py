@@ -11,13 +11,13 @@
 # ============================================================
 
 # importando mensagens, autenticação e shortcuts do Django
-from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib                 import messages
+from django.contrib.auth            import login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts               import get_object_or_404, redirect, render
 
 # importando forms de autenticação e cadastro
-from _apps.accounts.forms import LoginForm, PerfilDonoForm, PublicUserForm
+from _apps.accounts.forms  import LoginForm, PerfilDonoForm, PublicUserForm
 from _apps.accounts.models import Dono
 
 

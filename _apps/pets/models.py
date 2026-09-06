@@ -1,4 +1,4 @@
-from django.db import models
+from django.db             import models
 from _apps.accounts.models import Dono
 # Create your models here.
 

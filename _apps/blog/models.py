@@ -1,6 +1,6 @@
-from django.db import models
-from django.utils import timezone
-from _apps.accounts.models import Dono
+from django.db              import models
+from django.utils           import timezone
+from _apps.accounts.models  import Dono
 
 
 

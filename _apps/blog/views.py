@@ -1,11 +1,11 @@
-from django.contrib import messages
+from django.contrib                 import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models.deletion import ProtectedError
-from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models.deletion      import ProtectedError
+from django.shortcuts               import get_object_or_404, redirect, render
 
 from _apps.accounts.models import Dono
 
-from .forms import ArtigoBlogForm, CategoriaForm
+from .forms  import ArtigoBlogForm, CategoriaForm
 from .models import ArtigoBlog, Categoria
 
 

@@ -3,10 +3,10 @@
 # ============================================================
 
 # importando forms do Django e formulários prontos de autenticação
-from django import forms
+from django                    import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-from _apps.accounts.models import Dono
+from _apps.accounts.models     import Dono
 
 
 # ============================================================
