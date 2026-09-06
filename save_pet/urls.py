@@ -27,5 +27,5 @@ urlpatterns = [
     path('accounts/'        , include("_apps.accounts.urls")),
     path('pets/'            , include("_apps.pets.urls")),
     path('vaccines/'        , include("_apps.vaccines.urls")),
-    # path('blog/'            , include("_apps.blog.urls")),
+    path('blog/'             , include("_apps.blog.urls")),
 ]
