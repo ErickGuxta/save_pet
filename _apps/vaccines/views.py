@@ -14,6 +14,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 # importando formulário e model de vacinas
 from .forms  import VaccineForm
@@ -127,6 +128,7 @@ def edit(request, id):
 
 # Excluir registro de vacina
 @login_required
+@require_POST
 def delete(request, id):
     # busca e exclui a vacina informada na URL
     dono = get_object_or_404(Dono, pk=request.user.pk)

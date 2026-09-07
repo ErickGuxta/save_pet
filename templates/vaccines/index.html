@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8">
@@ -27,7 +27,7 @@
                 <tr>
                     <th>Nome</th>
                     <th>Pet</th>
-                    <th>Aplicação</th>
+                    <th>AplicaÃ§Ã£o</th>
                     <th></th>
                 </tr>
             </thead>
@@ -40,7 +40,10 @@
                         <td class="text-end">
                             <a href="{% url 'vaccines:detail' vaccine.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
                             <a href="{% url 'vaccines:edit' vaccine.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
-                            <a href="{% url 'vaccines:delete' vaccine.id %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                            <form method="post" action="{% url 'vaccines:delete' vaccine.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                            </form>
                         </td>
                     </tr>
                 {% empty %}

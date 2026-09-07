@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8">
@@ -12,8 +12,10 @@
             <h1 class="h3 mb-0">Artigos do blog</h1>
             <div>
                 <a href="{% url 'pets:index' %}" class="btn btn-outline-secondary">Pets</a>
-                <a href="{% url 'blog:categories' %}" class="btn btn-outline-secondary">Categorias</a>
-                <a href="{% url 'blog:create' %}" class="btn btn-primary">Novo artigo</a>
+                {% if request.user.is_superuser %}
+                    <a href="{% url 'blog:categories' %}" class="btn btn-outline-secondary">Categorias</a>
+                    <a href="{% url 'blog:create' %}" class="btn btn-primary">Novo artigo</a>
+                {% endif %}
             </div>
         </div>
 
@@ -35,8 +37,13 @@
                         <td>{{ article.data_publicacao|date:"d/m/Y H:i" }}</td>
                         <td class="text-end">
                             <a href="{% url 'blog:detail' article.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
-                            <a href="{% url 'blog:edit' article.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
-                            <a href="{% url 'blog:delete' article.id %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                            {% if request.user.is_superuser %}
+                                <a href="{% url 'blog:edit' article.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                                <form method="post" action="{% url 'blog:delete' article.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                </form>
+                            {% endif %}
                         </td>
                     </tr>
                 {% empty %}

@@ -14,6 +14,7 @@
 from django.contrib                 import messages
 from django.contrib.auth            import login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http   import require_POST
 from django.shortcuts               import get_object_or_404, redirect, render
 
 # importando forms de autenticação e cadastro
@@ -81,6 +82,7 @@ def login_view(request):
     return render(request, "accounts/login.html", context)
 
 
+@require_POST
 def logout_view(request):
     # encerra a sessão do usuário logado
     logout(request)
@@ -113,19 +115,19 @@ def edit(request):
         if form.is_valid():
             user = request.user
 
-            user.first_name = form.cleaned_data["nome"]
-            user.email = form.cleaned_data["email"]
+            user.first_name      = form.cleaned_data["nome"]
+            user.email           = form.cleaned_data["email"]
             user.save()
 
-            dono.cpf = form.cleaned_data["cpf"] or None
-            dono.telefone = form.cleaned_data["telefone"]
-            dono.cep = form.cleaned_data["cep"]
-            dono.logradouro = form.cleaned_data["logradouro"]
-            dono.numero = form.cleaned_data["numero"]
-            dono.complemento = form.cleaned_data["complemento"]
-            dono.bairro = form.cleaned_data["bairro"]
-            dono.cidade = form.cleaned_data["cidade"]
-            dono.estado = form.cleaned_data["estado"]
+            dono.cpf             = form.cleaned_data["cpf"] or None
+            dono.telefone        = form.cleaned_data["telefone"]
+            dono.cep             = form.cleaned_data["cep"]
+            dono.logradouro      = form.cleaned_data["logradouro"]
+            dono.numero          = form.cleaned_data["numero"]
+            dono.complemento     = form.cleaned_data["complemento"]
+            dono.bairro          = form.cleaned_data["bairro"]
+            dono.cidade          = form.cleaned_data["cidade"]
+            dono.estado          = form.cleaned_data["estado"]
             dono.save()
 
             messages.success(request, "Conta atualizada.")
