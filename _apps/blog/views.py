@@ -1,26 +1,13 @@
 from django.contrib                 import messages
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions         import PermissionDenied
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models.deletion      import ProtectedError
 from django.shortcuts               import get_object_or_404, redirect, render
 from django.views.decorators.http   import require_POST
-from functools                      import wraps
 
 from _apps.accounts.models import Dono
 
 from .forms  import ArtigoBlogForm, CategoriaForm
-from .models import ArtigoBlog, Categoria
-
-
-def superuser_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_superuser:
-            raise PermissionDenied
-
-        return view_func(request, *args, **kwargs)
-
-    return _wrapped_view
+from .models import ArtigoBlog,     Categoria
 
 
 @login_required
@@ -44,7 +31,7 @@ def detail(request, id):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 def create(request):
     dono = get_object_or_404(Dono, pk=request.user.pk)
     form = ArtigoBlogForm(request.POST or None)
@@ -60,7 +47,7 @@ def create(request):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 def edit(request, id):
     article = get_object_or_404(ArtigoBlog, id=id)
     form = ArtigoBlogForm(request.POST or None, instance=article)
@@ -74,7 +61,7 @@ def edit(request, id):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 @require_POST
 def delete(request, id):
     article = get_object_or_404(ArtigoBlog, id=id)
@@ -84,7 +71,7 @@ def delete(request, id):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 def categories(request):
     return render(
         request,
@@ -94,7 +81,7 @@ def categories(request):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 def category_create(request):
     form = CategoriaForm(request.POST or None)
 
@@ -107,7 +94,7 @@ def category_create(request):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 def category_edit(request, id):
     category = get_object_or_404(Categoria, id=id)
     form = CategoriaForm(request.POST or None, instance=category)
@@ -121,7 +108,7 @@ def category_edit(request, id):
 
 
 @login_required
-@superuser_required
+@user_passes_test(lambda user: user.is_superuser)
 @require_POST
 def category_delete(request, id):
     category = get_object_or_404(Categoria, id=id)
