@@ -1,60 +1,56 @@
-﻿<!doctype html>
-<html lang="pt-br">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pets</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <main class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Pets</h1>
-            <div>
-                <a href="{% url 'accounts:detail' %}" class="btn btn-outline-secondary">Conta</a>
-                <a href="{% url 'vaccines:index' %}" class="btn btn-outline-secondary">Vacinas</a>
-                <a href="{% url 'blog:index' %}" class="btn btn-outline-secondary">Blog</a>
-                <a href="{% url 'pets:create' %}" class="btn btn-primary">Novo pet</a>
+{% extends "base.html" %}
+
+{% block title %}Meus pets - SavePet{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Meus pets</h1>
+        <p class="page-subtitle">{{ pets|length }} pet{{ pets|length|pluralize:"s" }} cadastrado{{ pets|length|pluralize:"s" }}.</p>
+    </div>
+    <a href="{% url 'pets:create' %}" class="pet-btn-primary">Novo pet</a>
+</div>
+
+<div class="row g-4">
+    {% for pet in pets %}
+        <div class="col-md-6 col-xl-4 col-xxl-3">
+            <div class="pet-card p-0 h-100 overflow-hidden">
+                {% if pet.foto %}
+                    <img class="pet-photo" src="{{ pet.foto.url }}" alt="{{ pet.nome }}">
+                {% else %}
+                    <div class="photo-placeholder">{{ pet.especie|first }}</div>
+                {% endif %}
+                <div class="p-4">
+                    <div class="d-flex align-items-start justify-content-between gap-3">
+                        <div>
+                            <h2 class="h5 mb-1">{{ pet.nome }}</h2>
+                            <p class="text-muted mb-0">{{ pet.especie }}{% if pet.raca %} · {{ pet.raca }}{% endif %}</p>
+                        </div>
+                        <span class="pet-badge">Pet</span>
+                    </div>
+
+                    <div class="pet-card-info-grid mt-3 mb-4">
+                        <div class="mini-panel"><small class="d-block text-muted">Sexo</small><strong>{{ pet.sexo }}</strong></div>
+                        <div class="mini-panel"><small class="d-block text-muted">Peso</small><strong>{{ pet.peso }} kg</strong></div>
+                        <div class="mini-panel pet-card-info-wide"><small class="d-block text-muted">Pelagem</small><strong>{{ pet.pelagem }}</strong></div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'pets:detail' pet.id %}" class="pet-btn-primary">Ver perfil</a>
+                        <a href="{% url 'pets:edit' pet.id %}" class="pet-btn-secondary">Editar</a>
+                    </div>
+                </div>
             </div>
         </div>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>EspÃ©cie</th>
-                    <th>RaÃ§a</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for pet in pets %}
-                    <tr>
-                        <td>{{ pet.nome }}</td>
-                        <td>{{ pet.especie }}</td>
-                        <td>{{ pet.raca }}</td>
-                        <td class="text-end">
-                            <a href="{% url 'pets:detail' pet.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
-                            <a href="{% url 'pets:edit' pet.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
-                            <form method="post" action="{% url 'pets:delete' pet.id %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4">Nenhum pet cadastrado.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </main>
-</body>
-</html>
+    {% empty %}
+        <div class="col-12">
+            <div class="pet-card text-center py-5">
+                <div class="empty-mark">S</div>
+                <h2 class="h4 mt-3">Nenhum pet cadastrado</h2>
+                <p class="text-muted">Cadastre seu primeiro pet para começar o acompanhamento.</p>
+                <a href="{% url 'pets:create' %}" class="pet-btn-primary">Cadastrar pet</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
