@@ -3,11 +3,11 @@
 {% block title %}Criar conta - SavePet{% endblock %}
 
 {% block content %}
-<a class="pet-btn-ghost mb-3" href="{% url 'accounts:login' %}" style="padding-left: 0;">Entrar</a>
+<a class="pet-btn-ghost mb-3" href="{% url 'login' %}" style="padding-left: 0;">← Entrar</a>
 
 <div class="pet-card register-card">
     <div class="text-center mb-3">
-        <div class="brand-mark mx-auto mb-2" style="width: 48px; height: 48px; font-size: 22px;">S</div>
+        <div class="brand-mark mx-auto mb-2" style="width: 48px; height: 48px; font-size: 22px;">🐾</div>
         <h1 class="h3 mb-1">Criar conta</h1>
         <p class="text-muted mb-0">Informe seus dados de acesso para começar</p>
     </div>
@@ -16,7 +16,7 @@
         {% csrf_token %}
         <div class="register-grid">
             {% for field in form %}
-                <div class="{% if field.name == 'first_name' or field.name == 'email' %}register-field-full{% else %}register-field-half{% endif %}">
+                <div class="{% if field.name == 'nome' %}register-field-full{% else %}register-field-half{% endif %}">
                     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
@@ -38,7 +38,7 @@
 
     <p class="text-center text-muted mt-3 mb-0">
         Já tem uma conta?
-        <a class="fw-bold" href="{% url 'accounts:login' %}">Entrar</a>
+        <a class="fw-bold" href="{% url 'login' %}">Entrar</a>
     </p>
 </div>
 {% endblock %}

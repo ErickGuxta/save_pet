@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Excluir pet - Painel Admin{% endblock %}
+
+{% block content %}
+<div class="pet-card" style="max-width: 680px;">
+    <h1 class="h4 mb-3">Excluir pet</h1>
+    <p class="text-muted">
+        Confirme a exclusão de <strong>{{ pet.nome }}</strong>, vinculado ao tutor
+        <strong>{{ pet.usuario.username }}</strong>. Esta ação remove o pet do sistema.
+    </p>
+
+    <form method="post" class="d-flex gap-3 mt-4 flex-wrap">
+        {% csrf_token %}
+        <button type="submit" class="pet-btn-primary" style="background: var(--danger); box-shadow: none;">Excluir</button>
+        <a href="{% url 'admin_pets' %}" class="pet-btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

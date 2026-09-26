@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SavePet{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Olá, {{ user.first_name|default:user.username }}!</h1>
+        <p class="page-subtitle">Acompanhe a saúde, vacinação e localização dos seus pets.</p>
+    </div>
+    <a href="{% url 'pets:create' %}" class="pet-btn-primary">+ Novo Pet</a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <span class="stat-icon" style="background: var(--teal-light);">🐾</span>
+            <div class="stat-value">{{ total_pets }}</div>
+            <p class="stat-label">Total de pets</p>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <span class="stat-icon" style="background: var(--beige);">💉</span>
+            <div class="stat-value" style="color: #e58b4a;">{{ total_vaccines }}</div>
+            <p class="stat-label">Vacinas cadastradas</p>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <span class="stat-icon" style="background: #fef3c7;">📍</span>
+            <div class="stat-value" style="color: #d97706;">{{ total_trackers }}</div>
+            <p class="stat-label">Rastreadores ativos</p>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <span class="stat-icon" style="background: #ede9fe;">👤</span>
+            <div class="stat-value" style="color: #7c3aed;">1</div>
+            <p class="stat-label">Perfil de tutor</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="pet-card h-100">
+            <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+                <h2 class="h5 m-0">Meus Pets</h2>
+                <a class="pet-btn-ghost" href="{% url 'pets:index' %}">Ver todos →</a>
+            </div>
+            <div class="dashboard-pet-grid">
+                {% for pet in pets %}
+                    <article class="dashboard-pet-card">
+                        {% if pet.foto %}
+                            <img src="{{ pet.foto.url }}" alt="{{ pet.nome }}" class="dashboard-pet-photo">
+                        {% else %}
+                            <span class="dashboard-pet-photo dashboard-pet-placeholder">{% if pet.especie == "Gato" %}🐱{% elif pet.especie == "Pássaro" %}🐦{% elif pet.especie == "Peixe" %}🐟{% else %}🐶{% endif %}</span>
+                        {% endif %}
+                        <div class="dashboard-pet-body">
+                            <div class="dashboard-pet-header">
+                                <div>
+                                    <h3>{{ pet.nome }}</h3>
+                                    <p>{{ pet.especie }} · {{ pet.raca }}</p>
+                                </div>
+                                <strong>{{ pet.peso }} kg</strong>
+                            </div>
+                            <div class="pet-status-list">
+                                {% for status in pet.status_indicators %}
+                                    <span class="pet-badge {% if status.style == 'warning' %}warning{% elif status.style == 'danger' %}danger{% elif status.style == 'muted' %}muted{% endif %}">{{ status.label }}</span>
+                                {% endfor %}
+                            </div>
+                            <a class="pet-btn-ghost dashboard-pet-link" href="{% url 'pets:detail' pet.id %}">Ver perfil →</a>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="dashboard-empty-state">
+                        <p class="text-muted mb-3">Nenhum pet cadastrado ainda.</p>
+                        <a href="{% url 'pets:create' %}" class="pet-btn-primary">Cadastrar pet</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="pet-card h-100">
+            <h2 class="h5 mb-4">Próximas vacinas</h2>
+            <div class="d-flex flex-column gap-3">
+                {% for vaccine in upcoming_vaccines %}
+                    <div class="d-flex gap-3">
+                        <span style="width: 8px; border-radius: 999px; background: var(--teal-dark);"></span>
+                        <div>
+                            <strong class="d-block">{{ vaccine.pet.nome }}</strong>
+                            <span class="text-muted small d-block">{{ vaccine.nome }}</span>
+                            <span class="pet-badge mt-1">{{ vaccine.data_reforco|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted mb-0">Nenhum reforço de vacina cadastrado.</p>
+                {% endfor %}
+            </div>
+            <a href="{% url 'vaccines:index' %}" class="pet-btn-secondary w-100 mt-4">Ver calendário</a>
+        </div>
+    </div>
+</div>
+
+<div class="pet-card mt-4">
+    <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h2 class="h5 mb-1">Artigos recentes</h2>
+            <p class="text-muted small mb-0">Informações para cuidado, saúde e bem-estar.</p>
+        </div>
+        <a href="{% url 'blog:index' %}" class="pet-btn-ghost">Ver blog →</a>
+    </div>
+    <div class="row g-4">
+        {% for article in recent_articles %}
+            <div class="col-md-4">
+                <a href="{% url 'blog:detail' article.slug %}" class="text-decoration-none text-reset d-block h-100">
+                    <div class="mini-panel h-100 p-0 overflow-hidden" style="background: #fff; border: 1px solid var(--line);">
+                        {% if article.imagem_url %}
+                            <img src="{{ article.imagem_url }}" alt="{{ article.titulo }}" class="w-100 object-fit-cover" style="height: 132px;">
+                        {% endif %}
+                        <div class="p-3">
+                            <span class="pet-badge mb-2">{{ article.categoria.nome }}</span>
+                            <h3 class="h6 mb-2">{{ article.titulo }}</h3>
+                            <p class="text-muted small mb-0">{{ article.resumo|truncatechars:90 }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <div class="col-12"><p class="text-muted mb-0">Nenhum artigo publicado ainda.</p></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

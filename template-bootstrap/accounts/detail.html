@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - SavePet{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a class="pet-btn-ghost mb-2" href="{% url 'accounts:users' %}" style="padding-left: 0;">← Usuários</a>
+        <h1 class="page-title">{{ user.get_full_name|default:user.username }}</h1>
+        <p class="page-subtitle">{{ user.email|default:"E-mail não informado" }}</p>
+    </div>
+    <a href="{% url 'accounts:edit' user.id %}" class="pet-btn-secondary">Editar</a>
+</div>
+
+<div class="pet-card">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Usuário</dt><dd class="col-sm-9">{{ user.username }}</dd>
+        <dt class="col-sm-3">Nome</dt><dd class="col-sm-9">{{ user.get_full_name|default:"-" }}</dd>
+        <dt class="col-sm-3">E-mail</dt><dd class="col-sm-9">{{ user.email|default:"-" }}</dd>
+        <dt class="col-sm-3">Ativo</dt><dd class="col-sm-9">{{ user.is_active|yesno:"Sim,Não" }}</dd>
+        <dt class="col-sm-3">Equipe</dt><dd class="col-sm-9">{{ user.is_staff|yesno:"Sim,Não" }}</dd>
+        <dt class="col-sm-3">Superusuário</dt><dd class="col-sm-9 mb-0">{{ user.is_superuser|yesno:"Sim,Não" }}</dd>
+    </dl>
+</div>
+{% endblock %}

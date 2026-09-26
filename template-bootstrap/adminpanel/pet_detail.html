@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pet.nome }} - Painel Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex align-items-center gap-4">
+        {% if pet.foto %}
+            <img src="{{ pet.foto.url }}" alt="{{ pet.nome }}" class="pet-avatar object-fit-cover">
+        {% else %}
+            <span class="pet-avatar">{% if pet.especie == "Gato" %}🐱{% else %}🐶{% endif %}</span>
+        {% endif %}
+        <div>
+            <a class="pet-btn-ghost mb-2" href="{% url 'admin_pets' %}" style="padding-left: 0;">← Pets cadastrados</a>
+            <h1 class="page-title">{{ pet.nome }}</h1>
+            <div class="d-flex gap-2 flex-wrap mt-2">
+                <span class="pet-badge">{{ pet.especie }}</span>
+                <span class="pet-badge warning">{{ pet.raca }}</span>
+                <span class="pet-badge muted">Tutor: {{ pet.usuario.username }}</span>
+                {% for status in pet_statuses %}
+                    <span class="pet-badge {% if status.style == 'warning' %}warning{% elif status.style == 'danger' %}danger{% elif status.style == 'muted' %}muted{% endif %}">{{ status.label }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'admin_pet_edit' pet.id %}" class="pet-btn-secondary">Editar</a>
+        <a href="{% url 'admin_pet_delete' pet.id %}" class="pet-btn-ghost pet-btn-danger">Excluir</a>
+    </div>
+</div>
+
+<div class="row g-4 pet-detail-layout">
+    <div class="col-xl-8">
+        <div class="pet-card mb-4">
+            <h2 class="h5 mb-4">Informações gerais</h2>
+            <div class="pet-info-grid">
+                <div class="pet-info-item"><span>Tutor</span><strong>{{ pet.usuario.username }}</strong></div>
+                <div class="pet-info-item"><span>E-mail do tutor</span><strong>{{ pet.usuario.email|default:"Não informado" }}</strong></div>
+                <div class="pet-info-item"><span>Espécie</span><strong>{{ pet.especie }}</strong></div>
+                <div class="pet-info-item"><span>Raça</span><strong>{{ pet.raca }}</strong></div>
+                <div class="pet-info-item"><span>Sexo</span><strong>{{ pet.sexo }}</strong></div>
+                <div class="pet-info-item"><span>Nascimento</span><strong>{{ pet.data_nascimento|date:"d/m/Y" }}</strong></div>
+                <div class="pet-info-item"><span>Pelagem</span><strong>{{ pet.pelagem }}</strong></div>
+                <div class="pet-info-item"><span>Peso</span><strong>{{ pet.peso }} kg</strong></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="pet-card">
+            <h2 class="h5 mb-4">Saúde e observações</h2>
+            <div class="pet-health-list">
+                <div class="pet-health-item"><span>Alergias</span><p>{{ pet.alergias|default:"Nenhuma informação cadastrada." }}</p></div>
+                <div class="pet-health-item"><span>Doenças</span><p>{{ pet.doencas|default:"Nenhuma informação cadastrada." }}</p></div>
+                <div class="pet-health-item"><span>Medicamentos</span><p>{{ pet.medicamentos|default:"Nenhuma informação cadastrada." }}</p></div>
+                <div class="pet-health-item"><span>Observações</span><p>{{ pet.observacoes|default:"Nenhuma observação." }}</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pet-card mt-4">
+    <h2 class="h5 mb-4">Linha do tempo</h2>
+    <div class="pet-timeline">
+        {% for event in timeline_events %}
+            <div class="pet-timeline-item">
+                <span class="pet-timeline-marker {{ event.kind }}"></span>
+                <div class="pet-timeline-content">
+                    <span class="pet-timeline-date">{{ event.date_label }}</span>
+                    <strong>{{ event.title }}</strong>
+                    <p>{{ event.description }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted mb-0">Nenhum evento registrado.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

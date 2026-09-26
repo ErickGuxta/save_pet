@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Excluir {{ object_type }} - SavePet{% endblock %}
+
+{% block content %}
+<div class="pet-card" style="max-width: 680px;">
+    <h1 class="h4 mb-3">Excluir {{ object_type }}</h1>
+    <p class="text-muted">Confirme a exclusão de <strong>{{ object }}</strong>. Esta ação não pode ser desfeita.</p>
+    <form method="post" class="d-flex gap-3 mt-4">
+        {% csrf_token %}
+        <button type="submit" class="pet-btn-primary" style="background: var(--danger); box-shadow: none;">Excluir</button>
+        <a href="{% url 'admin_panel' %}" class="pet-btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

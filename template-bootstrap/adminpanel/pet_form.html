@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Editar pet - Painel Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a class="pet-btn-ghost mb-2" href="{% url 'admin_pets' %}" style="padding-left: 0;">← Pets cadastrados</a>
+        <h1 class="page-title">Editar {{ pet.nome }}</h1>
+        <p class="page-subtitle">Atualize os dados do pet e o tutor vinculado.</p>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row g-4">
+        <div class="col-xl-7">
+            <div class="pet-card">
+                <h2 class="h5 mb-4">Informações gerais</h2>
+                <div class="row g-3">
+                    {% for field in form %}
+                        {% if field.name != "alergias" and field.name != "doencas" and field.name != "medicamentos" and field.name != "observacoes" %}
+                            <div class="{% if field.name == 'foto' %}col-12{% else %}col-md-6{% endif %}">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.name == "foto" and form.instance.foto %}
+                                    <div class="current-file-preview mt-2">
+                                        <img src="{{ form.instance.foto.url }}" alt="{{ form.instance.nome }}" class="current-pet-photo">
+                                        <span class="text-muted small">Foto atual: {{ form.instance.foto.name }}</span>
+                                    </div>
+                                {% endif %}
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-5">
+            <div class="pet-card">
+                <h2 class="h5 mb-4">Saúde e observações</h2>
+                {% for field in form %}
+                    {% if field.name == "alergias" or field.name == "doencas" or field.name == "medicamentos" or field.name == "observacoes" %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-3 flex-wrap mt-4">
+        <button type="submit" class="pet-btn-primary">Salvar alterações</button>
+        <a href="{% url 'admin_pets' %}" class="pet-btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

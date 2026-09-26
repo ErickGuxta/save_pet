@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - SavePet{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div><h1 class="page-title">{{ title }}</h1><p class="page-subtitle">Organize os artigos informativos por tema.</p></div>
+    <a href="{% url 'admin_panel' %}" class="pet-btn-secondary">Cancelar</a>
+</div>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="pet-card">
+        {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="pet-btn-primary mt-4">Salvar categoria</button>
+</form>
+{% endblock %}

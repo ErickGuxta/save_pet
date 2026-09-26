@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Pets - SavePet{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Cadastro de pets</h1>
+        <p class="text-muted mb-0">Template baseado na entidade Pet do diagrama UML.</p>
+    </div>
+    <button type="button" class="btn btn-primary align-self-lg-start">Salvar pet</button>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="bg-white border rounded-3 p-4">
+            <h2 class="h5 mb-3">Dados do pet</h2>
+            <form>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nome</label>
+                        <input class="form-control" type="text" placeholder="Ex.: Luna">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Especie</label>
+                        <select class="form-select">
+                            <option>Cachorro</option>
+                            <option>Gato</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Raca</label>
+                        <input class="form-control" type="text">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Sexo</label>
+                        <select class="form-select">
+                            <option>Femea</option>
+                            <option>Macho</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Peso</label>
+                        <input class="form-control" type="number" step="0.1" placeholder="kg">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Data de nascimento</label>
+                        <input class="form-control date-br-input" type="text" data-date-br="true" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Pelagem</label>
+                        <input class="form-control" type="text">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Foto</label>
+                        <input class="form-control" type="file">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="bg-white border rounded-3 p-4">
+            <h2 class="h5 mb-3">Saude e observacoes</h2>
+            <div class="mb-3">
+                <label class="form-label">Alergias</label>
+                <textarea class="form-control" rows="2"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Doencas</label>
+                <textarea class="form-control" rows="2"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Medicamentos</label>
+                <textarea class="form-control" rows="2"></textarea>
+            </div>
+            <div>
+                <label class="form-label">Observacoes</label>
+                <textarea class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

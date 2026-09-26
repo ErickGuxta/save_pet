@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Excluir usuário - SavePet{% endblock %}
+
+{% block content %}
+<div class="pet-card" style="max-width: 680px;">
+    <h1 class="h4 mb-3">Excluir usuário</h1>
+    <p class="text-muted">Confirme a exclusão de <strong>{{ delete_user.get_full_name|default:delete_user.username }}</strong>. Esta ação remove o usuário do sistema.</p>
+
+    <form method="post" class="d-flex gap-3 mt-4">
+        {% csrf_token %}
+        <button type="submit" class="pet-btn-primary" style="background: var(--danger); box-shadow: none;">Excluir</button>
+        <a href="{% url 'accounts:users' %}" class="pet-btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

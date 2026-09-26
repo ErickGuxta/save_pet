@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - SavePet{% endblock %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+    <header class="blog-navbar">
+        <div class="blog-container d-flex align-items-center justify-content-between" style="height: 64px;">
+            <a class="brand p-0" href="{% url 'blog:index' %}">
+                <span class="brand-mark" style="width: 32px; height: 32px;">S</span>
+                <span>SavePet</span>
+            </a>
+            <div class="d-flex gap-2">
+                <a class="pet-btn-ghost" href="{% url 'login' %}">Entrar</a>
+                <a class="pet-btn-primary" href="{% url 'accounts:register' %}" style="padding: 9px 20px;">Cadastrar</a>
+            </div>
+        </div>
+    </header>
+{% endif %}
+
+<section class="blog-hero">
+    <span class="pet-badge mb-3">✍ Blog SavePet</span>
+    <h1 class="mb-3" style="font-size: clamp(28px, 5vw, 44px);">Conteúdo para tutores apaixonados</h1>
+    <p class="text-muted mx-auto mb-4" style="max-width: 520px;">
+        Dicas de saúde, nutrição, bem-estar e comportamento para cuidar melhor do seu pet.
+    </p>
+    <form class="mx-auto position-relative" method="get" style="max-width: 500px;">
+        <span style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #a0aec0;">🔍</span>
+        <input class="pet-input" name="q" value="{{ search }}" placeholder="Buscar artigos..." style="padding-left: 48px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        {% if selected_category != "todos" %}
+            <input type="hidden" name="categoria" value="{{ selected_category }}">
+        {% endif %}
+    </form>
+</section>
+
+<div class="blog-container py-4">
+    <div class="d-flex gap-2 flex-wrap mb-4">
+        <a class="pet-btn-ghost {% if selected_category == 'todos' %}active{% endif %}" href="{% url 'blog:index' %}" style="{% if selected_category == 'todos' %}background: var(--teal-dark); color: #fff;{% else %}background: #fff;{% endif %}">Todos</a>
+        {% for category in categories %}
+            <a class="pet-btn-ghost" href="{% url 'blog:index' %}?categoria={{ category.slug }}" style="{% if selected_category == category.slug %}background: var(--teal-dark); color: #fff;{% else %}background: #fff;{% endif %}">
+                {{ category.nome }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <p class="text-muted small mb-4">{{ articles|length }} artigo{{ articles|length|pluralize:"s" }} encontrado{{ articles|length|pluralize:"s" }}</p>
+
+    <div class="row g-4 pb-5">
+        {% for article in articles %}
+            <div class="col-md-6 col-xl-4">
+                <article class="pet-card p-0 h-100">
+                    {% if article.imagem_url %}
+                        <img class="blog-image" src="{{ article.imagem_url }}" alt="{{ article.titulo }}">
+                    {% else %}
+                        <div class="photo-placeholder" style="height: 210px; aspect-ratio: auto;">📝</div>
+                    {% endif %}
+                    <div class="p-4">
+                        <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                            <span class="pet-badge">{{ article.categoria.nome }}</span>
+                            <span class="text-muted small">⏱ {{ article.tempo_leitura }} min</span>
+                        </div>
+                        <h2 class="h5 mb-3">{{ article.titulo }}</h2>
+                        <p class="text-muted">{{ article.resumo|truncatechars:120 }}</p>
+                        <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+                            <span class="small text-muted">{{ article.usuario.get_full_name|default:article.usuario.username }}</span>
+                            <span class="small text-muted">{{ article.data_publicacao|date:"d M Y" }}</span>
+                        </div>
+                        <a href="{% url 'blog:detail' article.slug %}" class="pet-btn-secondary w-100">Ler mais →</a>
+                    </div>
+                </article>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="pet-card text-center py-5">
+                    <div style="font-size: 48px;">📰</div>
+                    <h2 class="h4 mt-3">Nenhum artigo encontrado</h2>
+                    <p class="text-muted mb-0">Tente outros termos ou categorias.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

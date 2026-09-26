@@ -3,9 +3,9 @@
 {% block title %}Login - SavePet{% endblock %}
 
 {% block content %}
-<a class="pet-btn-ghost mb-4" href="{% url 'accounts:create' %}" style="padding-left: 0;">Criar conta</a>
+<a class="pet-btn-ghost mb-4" href="{% url 'accounts:register' %}" style="padding-left: 0;">← Criar conta</a>
 
-<div class="pet-card auth-card">
+<div class="pet-card" style="padding: 40px 36px;">
     <div class="text-center mb-4">
         <div class="brand-mark mx-auto mb-3" style="width: 56px; height: 56px; font-size: 24px;">S</div>
         <h1 class="h3 mb-1">Bem-vindo de volta</h1>
@@ -34,7 +34,7 @@
 
     <p class="text-center text-muted mt-4 mb-0">
         Ainda não tem conta?
-        <a class="fw-bold" href="{% url 'accounts:create' %}">Criar usuário</a>
+        <a class="fw-bold" href="{% url 'accounts:register' %}">Criar usuário</a>
     </p>
 </div>
 {% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Admin - SavePet{% endblock %}
+
+{% block content %}
+<div class="admin-topbar d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+    <div>
+        <span class="pet-badge mb-2">⚙ Administração</span>
+        <h1 class="h3 mb-1 text-white">Painel Admin SavePet</h1>
+        <p class="mb-0" style="color: #cbd5e0;">Visão geral e acesso aos módulos principais do sistema.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'blog:article_create' %}" class="pet-btn-primary">+ Artigo</a>
+        <a href="{% url 'blog:category_create' %}" class="pet-btn-secondary" style="background: transparent; color: #fff; border-color: #fff;">+ Categoria</a>
+    </div>
+</div>
+
+<div class="admin-stats-grid mb-4">
+    <div class="stat-card">
+        <span class="stat-icon" style="background: var(--teal-light);">👥</span>
+        <div class="stat-value">{{ total_users }}</div>
+        <p class="stat-label">Usuários</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon" style="background: var(--beige);">🐾</span>
+        <div class="stat-value" style="color: #e58b4a;">{{ total_pets }}</div>
+        <p class="stat-label">Pets</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon" style="background: #ede9fe;">📝</span>
+        <div class="stat-value" style="color: #7c3aed;">{{ total_articles }}</div>
+        <p class="stat-label">Artigos</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon" style="background: #fef3c7;">📍</span>
+        <div class="stat-value" style="color: #d97706;">{{ total_trackers }}</div>
+        <p class="stat-label">Rastreadores</p>
+    </div>
+</div>
+
+<div class="module-grid mb-4">
+    <section class="pet-card p-0 admin-module-card">
+        <div class="admin-card-header">
+            <div><h2 class="h5 mb-1">👥 Usuários</h2><p class="text-muted small mb-0">{{ total_users }} registros</p></div>
+            <a href="{% url 'accounts:users' %}" class="pet-btn-ghost">Gerenciar</a>
+        </div>
+        <div class="table-wrap">
+            <table class="savepet-table admin-table">
+                <tbody>
+                    {% for item in users %}
+                        <tr>
+                            <td><strong>{{ item.username }}</strong><span class="text-muted small d-block">{{ item.email|default:"-" }}</span></td>
+                            <td class="admin-status-cell">{% if item.is_active %}<span class="pet-badge">Ativo</span>{% else %}<span class="pet-badge danger">Inativo</span>{% endif %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhum usuário.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="pet-card p-0 admin-module-card">
+        <div class="admin-card-header">
+            <div><h2 class="h5 mb-1">🐾 Pets</h2><p class="text-muted small mb-0">{{ total_pets }} registros</p></div>
+            <a href="{% url 'pets:index' %}" class="pet-btn-ghost">Ver módulo</a>
+        </div>
+        <div class="table-wrap">
+            <table class="savepet-table admin-table">
+                <tbody>
+                    {% for pet in pets %}
+                        <tr><td><strong>{{ pet.nome }}</strong><span class="text-muted small d-block">{{ pet.especie }} · {{ pet.usuario.username }}</span></td><td class="admin-status-cell">{{ pet.peso }} kg</td></tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhum pet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="pet-card p-0 admin-module-card">
+        <div class="admin-card-header">
+            <div><h2 class="h5 mb-1">🏷 Categorias</h2><p class="text-muted small mb-0">{{ total_categories }} registros</p></div>
+            <a href="{% url 'blog:category_create' %}" class="pet-btn-ghost">Criar</a>
+        </div>
+        <div class="table-wrap">
+            <table class="savepet-table admin-table">
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td><strong>{{ category.nome }}</strong><span class="text-muted small d-block">{{ category.slug }}</span></td>
+                            <td class="admin-actions-cell">
+                                <div class="admin-row-actions">
+                                    <a href="{% url 'blog:category_edit' category.id %}" class="pet-btn-ghost">Editar</a>
+                                    <a href="{% url 'blog:category_delete' category.id %}" class="pet-btn-ghost pet-btn-danger">Excluir</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhuma categoria.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="pet-card p-0 admin-module-card">
+        <div class="admin-card-header">
+            <div><h2 class="h5 mb-1">📝 Artigos</h2><p class="text-muted small mb-0">{{ total_articles }} registros</p></div>
+            <a href="{% url 'blog:article_create' %}" class="pet-btn-ghost">Criar</a>
+        </div>
+        <div class="table-wrap">
+            <table class="savepet-table admin-table">
+                <tbody>
+                    {% for article in articles %}
+                        <tr>
+                            <td><strong>{{ article.titulo|truncatechars:52 }}</strong><span class="text-muted small d-block">{{ article.categoria.nome }} · {{ article.data_publicacao|date:"d/m/Y" }}</span></td>
+                            <td class="admin-actions-cell">
+                                <div class="admin-row-actions">
+                                    <a href="{% url 'blog:detail' article.slug %}" class="pet-btn-ghost">Ver</a>
+                                    <a href="{% url 'blog:article_edit' article.id %}" class="pet-btn-ghost">Editar</a>
+                                    <a href="{% url 'blog:article_delete' article.id %}" class="pet-btn-ghost pet-btn-danger">Excluir</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhum artigo.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="pet-card p-0 admin-module-card">
+        <div class="admin-card-header">
+            <div><h2 class="h5 mb-1">💉 Vacinação</h2><p class="text-muted small mb-0">{{ total_vaccines }} registros</p></div>
+            <a href="{% url 'vaccines:index' %}" class="pet-btn-ghost">Ver módulo</a>
+        </div>
+        <div class="table-wrap">
+            <table class="savepet-table admin-table">
+                <tbody>
+                    {% for vaccine in vaccines %}
+                        <tr><td><strong>{{ vaccine.nome }}</strong><span class="text-muted small d-block">{{ vaccine.pet.nome }} · {{ vaccine.data_aplicacao|date:"d/m/Y" }}</span></td><td class="admin-status-cell">{% if vaccine.data_reforco %}<span class="pet-badge">{{ vaccine.data_reforco|date:"d/m/Y" }}</span>{% endif %}</td></tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhuma vacina.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="pet-card p-0 admin-module-card">
+        <div class="admin-card-header">
+            <div><h2 class="h5 mb-1">📡 Rastreadores</h2><p class="text-muted small mb-0">{{ total_trackers }} registros</p></div>
+            <a href="{% url 'locator:index' %}" class="pet-btn-ghost">Ver módulo</a>
+        </div>
+        <div class="table-wrap">
+            <table class="savepet-table admin-table">
+                <tbody>
+                    {% for tracker in trackers %}
+                        <tr><td><strong>{{ tracker.identificador }}</strong><span class="text-muted small d-block">{{ tracker.pet.nome }} · {{ tracker.modelo }}</span></td><td class="admin-status-cell"><span class="pet-badge">Ativo</span></td></tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhum rastreador.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<div class="pet-card p-0 admin-module-card">
+    <div class="admin-card-header">
+        <div>
+        <h2 class="h5 mb-1">📍 Últimas localizações</h2>
+        <p class="text-muted small mb-0">{{ total_locations }} pontos registrados</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="savepet-table">
+            <thead><tr><th>Pet</th><th>Rastreador</th><th>Latitude</th><th>Longitude</th><th>Horário</th></tr></thead>
+            <tbody>
+                {% for location in locations %}
+                    <tr><td><strong>{{ location.rastreador.pet.nome }}</strong></td><td>{{ location.rastreador.identificador }}</td><td>{{ location.latitude }}</td><td>{{ location.longitude }}</td><td>{{ location.timestamp|date:"d/m/Y H:i" }}</td></tr>
+                {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">Nenhuma localização registrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

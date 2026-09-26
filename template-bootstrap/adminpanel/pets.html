@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Pets - Painel Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a class="pet-btn-ghost mb-2" href="{% url 'admin_panel' %}" style="padding-left: 0;">← Painel admin</a>
+        <h1 class="page-title">Pets cadastrados</h1>
+        <p class="page-subtitle">Gerencie os dados dos pets de todos os tutores.</p>
+    </div>
+</div>
+
+<div class="pet-card p-0">
+    <form method="get" class="admin-card-filter admin-pets-filter">
+        <input class="form-control" type="search" name="q" value="{{ search }}" placeholder="Buscar por nome do pet">
+        <button type="submit" class="pet-btn-secondary">Buscar</button>
+        {% if search %}
+            <a class="pet-btn-ghost" href="{% url 'admin_pets' %}">Limpar</a>
+        {% endif %}
+    </form>
+
+    <div class="table-wrap">
+        <table class="savepet-table admin-table admin-pets-table">
+            <thead>
+                <tr>
+                    <th>Pet</th>
+                    <th>Tutor</th>
+                    <th>Espécie</th>
+                    <th>Peso</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pet in pets %}
+                    <tr>
+                        <td><strong>{{ pet.nome }}</strong><span class="text-muted small d-block">{{ pet.raca }}</span></td>
+                        <td>{{ pet.usuario.username }}<span class="text-muted small d-block">{{ pet.usuario.email|default:"E-mail não informado" }}</span></td>
+                        <td>{{ pet.especie }}</td>
+                        <td>{{ pet.peso }} kg</td>
+                        <td class="admin-actions-cell">
+                            <div class="admin-row-actions">
+                                <a href="{% url 'admin_pet_detail' pet.id %}" class="pet-btn-ghost">Ver</a>
+                                <a href="{% url 'admin_pet_edit' pet.id %}" class="pet-btn-ghost">Editar</a>
+                                <a href="{% url 'admin_pet_delete' pet.id %}" class="pet-btn-ghost pet-btn-danger">Excluir</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">Nenhum pet encontrado.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
