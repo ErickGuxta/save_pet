@@ -33,6 +33,32 @@ a {
     min-height: 100vh;
 }
 
+.blog-hero {
+    padding: 40px 24px;
+    border-radius: 16px;
+    background: var(--mint);
+    text-align: center;
+}
+
+.blog-container {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.blog-card,
+.article-prose {
+    overflow-wrap: anywhere;
+}
+
+.article-prose {
+    line-height: 1.8;
+}
+
+.article-prose p:last-child {
+    margin-bottom: 0;
+}
+
 .app-shell {
     min-height: 100vh;
     display: grid;
