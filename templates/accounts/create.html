@@ -16,9 +16,22 @@
         {% csrf_token %}
         <div class="register-grid">
             {% for field in form %}
-                <div class="{% if field.name == 'first_name' or field.name == 'email' %}register-field-full{% else %}register-field-half{% endif %}">
+                <div class="{% if field.name == 'username' or field.name == 'first_name' or field.name == 'email' %}register-field-full{% else %}register-field-half{% endif %}">
                     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
+                    {% if field.name == 'password1' or field.name == 'password2' %}
+                        <div class="input-group">
+                            {{ field }}
+                            <button type="button" class="btn btn-outline-secondary" data-toggle-password="{{ field.id_for_label }}" aria-controls="{{ field.id_for_label }}" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha" hidden>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path data-eye-slash d="m3 3 18 18" style="display: none;" />
+                                </svg>
+                            </button>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
                     {% if field.help_text %}
                         <div class="form-text">{{ field.help_text }}</div>
                     {% endif %}
@@ -41,4 +54,22 @@
         <a class="fw-bold" href="{% url 'accounts:login' %}">Entrar</a>
     </p>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.querySelectorAll('[data-toggle-password]').forEach(function (button) {
+        var input = document.getElementById(button.dataset.togglePassword);
+        button.hidden = false;
+        button.addEventListener('click', function () {
+            var showPassword = input.type === 'password';
+            input.type = showPassword ? 'text' : 'password';
+            var label = showPassword ? 'Ocultar senha' : 'Mostrar senha';
+            button.setAttribute('aria-label', label);
+            button.setAttribute('aria-pressed', String(showPassword));
+            button.title = label;
+            button.querySelector('[data-eye-slash]').style.display = showPassword ? '' : 'none';
+        });
+    });
+</script>
 {% endblock %}

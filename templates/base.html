@@ -27,9 +27,12 @@
                 </a>
 
                 <p class="sidebar-label">Menu</p>
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav" aria-label="Menu principal">
+                    <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'accounts:dashboard' %}">
+                        <span>Dashboard</span>
+                    </a>
                     <a class="sidebar-link {% if request.resolver_match.namespace == 'pets' %}active{% endif %}" href="{% url 'pets:index' %}">
-                        <span>Pets</span>
+                        <span>Meus Pets</span>
                     </a>
                     <a class="sidebar-link {% if request.resolver_match.namespace == 'vaccines' %}active{% endif %}" href="{% url 'vaccines:index' %}">
                         <span>Vacinas</span>
@@ -37,7 +40,7 @@
                     <a class="sidebar-link {% if request.resolver_match.namespace == 'blog' %}active{% endif %}" href="{% url 'blog:index' %}">
                         <span>Blog</span>
                     </a>
-                    <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' %}active{% endif %}" href="{% url 'accounts:profile' %}">
+                    <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name != 'dashboard' %}active{% endif %}" href="{% url 'accounts:profile' %}">
                         <span>Minha conta</span>
                     </a>
                 </nav>
