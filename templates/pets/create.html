@@ -11,48 +11,156 @@
     <a href="{% url 'pets:index' %}" class="pet-btn-secondary">Cancelar</a>
 </div>
 
-<form method="post" enctype="multipart/form-data" novalidate>
+<form method="post" enctype="multipart/form-data" novalidate class="pet-form">
     {% csrf_token %}
-    <div class="row g-4">
-        <div class="col-xl-7">
-            <div class="pet-card">
-                <h2 class="h5 mb-4">Informações gerais</h2>
-                <div class="row g-3">
-                    {% for field in form %}
-                        {% if field.name != "alergias" and field.name != "doencas" and field.name != "medicamentos" and field.name != "observacoes" %}
-                            <div class="{% if field.name == 'foto' %}col-12{% else %}col-md-6{% endif %}">
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.help_text %}
-                                    <div class="form-text">{{ field.help_text }}</div>
-                                {% endif %}
-                                {% for error in field.errors %}
-                                    <div class="text-danger small mt-1">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="pet-form-layout">
+        <div class="pet-form-main">
+            <div class="pet-card pet-form-section">
+                <div class="section-heading">
+                    <h2>Identificação</h2>
+                    <p>Dados básicos para reconhecer o pet no sistema.</p>
+                </div>
+
+                <div class="pet-form-grid">
+                    <div class="pet-form-field pet-form-field-wide">
+                        <label class="form-label" for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>
+                        {{ form.nome }}
+                        {% for error in form.nome.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.especie.id_for_label }}">{{ form.especie.label }}</label>
+                        {{ form.especie }}
+                        {% for error in form.especie.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.sexo.id_for_label }}">{{ form.sexo.label }}</label>
+                        {{ form.sexo }}
+                        {% for error in form.sexo.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.raca.id_for_label }}">{{ form.raca.label }}</label>
+                        {{ form.raca }}
+                        {% for error in form.raca.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.data_nascimento.id_for_label }}">{{ form.data_nascimento.label }}</label>
+                        {{ form.data_nascimento }}
+                        {% for error in form.data_nascimento.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pet-card pet-form-section">
+                <div class="section-heading">
+                    <h2>Características</h2>
+                    <p>Informações físicas usadas no acompanhamento.</p>
+                </div>
+
+                <div class="pet-form-grid">
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.pelagem.id_for_label }}">{{ form.pelagem.label }}</label>
+                        {{ form.pelagem }}
+                        {% for error in form.pelagem.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.peso.id_for_label }}">{{ form.peso.label }}</label>
+                        {{ form.peso }}
+                        {% for error in form.peso.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pet-card pet-form-section">
+                <div class="section-heading">
+                    <h2>Saúde e observações</h2>
+                    <p>Registre alertas importantes para consultas e cuidados.</p>
+                </div>
+
+                <div class="pet-form-health-grid">
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.alergias.id_for_label }}">{{ form.alergias.label }}</label>
+                        {{ form.alergias }}
+                        {% for error in form.alergias.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.doencas.id_for_label }}">{{ form.doencas.label }}</label>
+                        {{ form.doencas }}
+                        {% for error in form.doencas.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.medicamentos.id_for_label }}">{{ form.medicamentos.label }}</label>
+                        {{ form.medicamentos }}
+                        {% for error in form.medicamentos.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pet-form-field">
+                        <label class="form-label" for="{{ form.observacoes.id_for_label }}">{{ form.observacoes.label }}</label>
+                        {{ form.observacoes }}
+                        {% for error in form.observacoes.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-5">
-            <div class="pet-card">
-                <h2 class="h5 mb-4">Saúde e observações</h2>
-                {% for field in form %}
-                    {% if field.name == "alergias" or field.name == "doencas" or field.name == "medicamentos" or field.name == "observacoes" %}
-                        <div class="mb-3">
-                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% for error in field.errors %}
-                                <div class="text-danger small mt-1">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+
+        <aside class="pet-form-side">
+            <div class="pet-card pet-form-section pet-photo-panel">
+                <div class="section-heading">
+                    <h2>Foto</h2>
+                    <p>Use uma imagem clara do pet.</p>
+                </div>
+
+                <div class="pet-photo-upload">
+                    <div class="photo-placeholder">P</div>
+                    <label class="form-label" for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
+                    {{ form.foto }}
+                    {% if form.foto.help_text %}
+                        <div class="form-text">{{ form.foto.help_text }}</div>
                     {% endif %}
-                {% endfor %}
+                    {% for error in form.foto.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        </aside>
     </div>
 
-    <button type="submit" class="pet-btn-primary mt-4">Salvar pet</button>
+    <div class="pet-form-actions">
+        <a href="{% url 'pets:index' %}" class="pet-btn-secondary">Cancelar</a>
+        <button type="submit" class="pet-btn-primary">Salvar pet</button>
+    </div>
 </form>
 {% endblock %}

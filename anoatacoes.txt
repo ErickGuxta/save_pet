@@ -1,9 +1,0 @@
-Check List Sistema:
-
-OK- Refazer view de account com base na model de User corrigina
-OK- Verificar se todas as autenticações estão ok, do django.contrib.auth
-OK- Finalizar todas as views e fazer testes
-- Instalar templates
-
-Obs.: 
-    - não mexer mais no diagrama, nem nos atributos das models

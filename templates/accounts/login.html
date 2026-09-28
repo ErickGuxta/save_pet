@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Login - SavePet{% endblock %}
 
@@ -7,7 +8,7 @@
 
 <div class="pet-card auth-card">
     <div class="text-center mb-4">
-        <div class="brand-mark mx-auto mb-3" style="width: 56px; height: 56px; font-size: 24px;">S</div>
+        <img class="auth-logo mb-3" src="{% static 'img/logo.png' %}" alt="SavePet">
         <h1 class="h3 mb-1">Bem-vindo de volta</h1>
         <p class="text-muted mb-0">Entre na sua conta para continuar</p>
     </div>
@@ -18,7 +19,20 @@
         {% for field in form %}
             <div class="mb-3">
                 <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
+                {% if field.name == 'password' %}
+                    <div class="input-group">
+                        {{ field }}
+                        <button type="button" class="btn btn-outline-secondary" data-toggle-password="{{ field.id_for_label }}" aria-controls="{{ field.id_for_label }}" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha" hidden>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                                <circle cx="12" cy="12" r="3" />
+                                <path data-eye-slash d="m3 3 18 18" style="display: none;" />
+                            </svg>
+                        </button>
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
                 {% for error in field.errors %}
                     <div class="text-danger small mt-1">{{ error }}</div>
                 {% endfor %}
@@ -37,4 +51,22 @@
         <a class="fw-bold" href="{% url 'accounts:create' %}">Criar usuário</a>
     </p>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.querySelectorAll('[data-toggle-password]').forEach(function (button) {
+        var input = document.getElementById(button.dataset.togglePassword);
+        button.hidden = false;
+        button.addEventListener('click', function () {
+            var showPassword = input.type === 'password';
+            input.type = showPassword ? 'text' : 'password';
+            var label = showPassword ? 'Ocultar senha' : 'Mostrar senha';
+            button.setAttribute('aria-label', label);
+            button.setAttribute('aria-pressed', String(showPassword));
+            button.title = label;
+            button.querySelector('[data-eye-slash]').style.display = showPassword ? '' : 'none';
+        });
+    });
+</script>
 {% endblock %}

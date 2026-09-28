@@ -20,6 +20,7 @@ from django.views.decorators.http import require_POST
 from .forms import PetForm
 from .models import Pet
 from _apps.accounts.models import Dono
+from _apps.accounts.permissions import is_admin_sistema
 
 
 
@@ -30,9 +31,12 @@ from _apps.accounts.models import Dono
 # Listar pets
 @login_required
 def pets(request):
-    # lista apenas os pets do usuário logado
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    pets = Pet.objects.filter(dono=dono)
+    # admin vê todos; tutor comum vê apenas os próprios pets
+    if is_admin_sistema(request.user):
+        pets = Pet.objects.all()
+    else:
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        pets = Pet.objects.filter(dono=dono)
 
     context = {
         "pets": pets,
@@ -43,13 +47,13 @@ def pets(request):
 # Detalhar pet
 @login_required
 def detail(request, id):
-    # busca o pet pelo ID e garante que pertence ao usuário logado
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    pet = get_object_or_404(
-        Pet.objects.prefetch_related("vacinas"),
-        id=id,
-        dono=dono,
-    )
+    # admin pode abrir qualquer pet; tutor comum apenas os próprios
+    pets_query = Pet.objects.prefetch_related("vacinas")
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        pets_query = pets_query.filter(dono=dono)
+
+    pet = get_object_or_404(pets_query, id=id)
 
     context = {
         "pet": pet,
@@ -62,7 +66,11 @@ def detail(request, id):
 @login_required
 def create(request):
     # instanciando a metaclasse PetForm
-    dono = get_object_or_404(Dono, pk=request.user.pk)
+    dono = Dono.objects.filter(pk=request.user.pk).first()
+    if dono is None:
+        messages.error(request, "Para cadastrar pet, entre com uma conta de tutor.")
+        return redirect("pets:index")
+
     form = PetForm()
 
     if request.method == "POST":
@@ -95,8 +103,12 @@ def create(request):
 def edit(request, id):
 
     # busca o pet que será editado
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    pet = get_object_or_404(Pet, id=id, dono=dono)
+    pets_query = Pet.objects.all()
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        pets_query = pets_query.filter(dono=dono)
+
+    pet = get_object_or_404(pets_query, id=id)
     form = PetForm(instance=pet)
 
     if request.method == "POST":
@@ -125,8 +137,12 @@ def edit(request, id):
 @require_POST
 def delete(request, id):
     # busca e exclui o pet informado na URL
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    pet = get_object_or_404(Pet, id=id, dono=dono)
+    pets_query = Pet.objects.all()
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        pets_query = pets_query.filter(dono=dono)
+
+    pet = get_object_or_404(pets_query, id=id)
     pet.delete()
     messages.success(request, "Pet excluído com sucesso.")
     return redirect("pets:index")

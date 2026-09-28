@@ -12,7 +12,7 @@
 </section>
 
 <div class="blog-container py-4">
-    {% if user.is_superuser %}
+    {% if is_admin_sistema %}
         <div class="d-flex gap-2 flex-wrap mb-4">
             <a href="{% url 'blog:categories' %}" class="pet-btn-secondary">Categorias</a>
             <a href="{% url 'blog:create' %}" class="pet-btn-primary">+ Novo artigo</a>
@@ -36,7 +36,7 @@
                             <span class="small text-muted">{{ article.data_publicacao|date:"d M Y" }}</span>
                         </div>
                         <a href="{% url 'blog:detail' article.id %}" class="pet-btn-secondary w-100">Ler mais →</a>
-                        {% if user.is_superuser %}
+                        {% if is_admin_sistema %}
                             <div class="d-flex flex-wrap gap-2 mt-3">
                                 <a href="{% url 'blog:edit' article.id %}" class="pet-btn-ghost">Editar</a>
                                 <form method="post" action="{% url 'blog:delete' article.id %}">

@@ -20,6 +20,7 @@ from django.views.decorators.http import require_POST
 from .forms  import VaccineForm
 from .models import RegistroVacina
 from _apps.accounts.models import Dono
+from _apps.accounts.permissions import is_admin_sistema
 
 
 
@@ -30,11 +31,11 @@ from _apps.accounts.models import Dono
 # Listar registros de vacinas
 @login_required
 def vaccines(request):
-    # lista apenas as vacinas do usuário logado
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    vaccines = RegistroVacina.objects.filter(
-        pet__dono=dono
-    ).select_related("pet")
+    # admin vê todas; tutor comum vê apenas as próprias vacinas
+    vaccines = RegistroVacina.objects.select_related("pet")
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        vaccines = vaccines.filter(pet__dono=dono)
 
     context = {
         "vaccines": vaccines,
@@ -46,13 +47,13 @@ def vaccines(request):
 # Detalhar vacina
 @login_required
 def detail(request, id):
-    # busca a vacina pelo ID e garante que pertence ao usuário logado
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    vaccine = get_object_or_404(
-        RegistroVacina,
-        id=id,
-        pet__dono=dono,
-    )
+    # admin pode abrir qualquer vacina; tutor comum apenas as próprias
+    vaccines_query = RegistroVacina.objects.all()
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        vaccines_query = vaccines_query.filter(pet__dono=dono)
+
+    vaccine = get_object_or_404(vaccines_query, id=id)
 
     context = {
         "vaccine": vaccine
@@ -65,7 +66,10 @@ def detail(request, id):
 @login_required
 def create(request):
     # instanciando a metaclasse VaccineForm filtrando pets do usuário logado
-    dono = get_object_or_404(Dono, pk=request.user.pk)
+    dono = None
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+
     form = VaccineForm(dono=dono)
 
     if request.method == "POST":
@@ -96,12 +100,13 @@ def create(request):
 def edit(request, id):
 
     # busca a vacina que será editada
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    vaccine = get_object_or_404(
-        RegistroVacina,
-        id=id,
-        pet__dono=dono,
-    )
+    dono = None
+    vaccines_query = RegistroVacina.objects.all()
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        vaccines_query = vaccines_query.filter(pet__dono=dono)
+
+    vaccine = get_object_or_404(vaccines_query, id=id)
     form = VaccineForm(instance=vaccine, dono=dono)
 
     if request.method == "POST":
@@ -131,12 +136,12 @@ def edit(request, id):
 @require_POST
 def delete(request, id):
     # busca e exclui a vacina informada na URL
-    dono = get_object_or_404(Dono, pk=request.user.pk)
-    vaccine = get_object_or_404(
-        RegistroVacina,
-        id=id,
-        pet__dono=dono,
-    )
+    vaccines_query = RegistroVacina.objects.all()
+    if not is_admin_sistema(request.user):
+        dono = get_object_or_404(Dono, pk=request.user.pk)
+        vaccines_query = vaccines_query.filter(pet__dono=dono)
+
+    vaccine = get_object_or_404(vaccines_query, id=id)
     vaccine.delete()
     messages.success(request, "Vacina excluída com sucesso.")
     return redirect("vaccines:index")

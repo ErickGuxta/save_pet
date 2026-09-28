@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Meus pets - SavePet{% endblock %}
 
@@ -45,7 +46,7 @@
     {% empty %}
         <div class="col-12">
             <div class="pet-card text-center py-5">
-                <div class="empty-mark">S</div>
+                <img class="empty-logo" src="{% static 'img/logo.png' %}" alt="SavePet">
                 <h2 class="h4 mt-3">Nenhum pet cadastrado</h2>
                 <p class="text-muted">Cadastre seu primeiro pet para começar o acompanhamento.</p>
                 <a href="{% url 'pets:create' %}" class="pet-btn-primary">Cadastrar pet</a>

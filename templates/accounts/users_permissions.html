@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Usuários e permissões - SavePet{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Usuários e permissões</h1>
+        <p class="page-subtitle">Gerencie quem pertence ao grupo {{ admin_group_name }}.</p>
+    </div>
+    <a href="{% url 'accounts:dashboard' %}" class="pet-btn-secondary">Dashboard</a>
+</div>
+
+<div class="pet-card users-permissions-card">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 users-permissions-header">
+        <div>
+            <h2 class="h5 mb-1">Controle de acesso</h2>
+            <p class="text-muted mb-0">Marque os tutores que também devem administrar o sistema.</p>
+        </div>
+        <button type="submit" form="permissions-form" class="pet-btn-primary">Salvar permissões</button>
+    </div>
+
+    <form id="permissions-form" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="permissions">
+        <div class="table-wrap">
+            <table class="savepet-table users-permissions-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th class="text-center">Admin do sistema</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in users %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.user.username }}</strong>
+                                {% if item.user.pk == request.user.pk %}
+                                    <span class="pet-badge ms-2">Você</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted">{{ item.user.email|default:"-" }}</td>
+                            <td>
+                                {% if item.user.is_superuser %}
+                                    <span class="pet-badge">Superadmin</span>
+                                {% elif item.user.is_staff %}
+                                    <span class="pet-badge">Staff</span>
+                                {% else %}
+                                    <span class="text-muted">Tutor</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.user.is_superuser %}
+                                    <span class="pet-badge">Sempre admin</span>
+                                {% elif item.user.is_staff %}
+                                    <span class="pet-badge">Sempre admin</span>
+                                {% else %}
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="admin_users"
+                                        value="{{ item.user.pk }}"
+                                        aria-label="Tornar {{ item.user.username }} admin do sistema"
+                                        {% if item.is_group_admin %}checked{% endif %}
+                                    >
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if item.user.pk == request.user.pk %}
+                                    <span class="text-muted small">Conta atual</span>
+                                {% else %}
+                                    <button
+                                        type="submit"
+                                        form="delete-user-{{ item.user.pk }}"
+                                        class="pet-btn-ghost pet-btn-danger"
+                                        onclick="return confirm('Apagar o usuário {{ item.user.username }}? Esta ação não pode ser desfeita.');"
+                                    >
+                                        Apagar
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">Nenhum usuário cadastrado.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+{% for item in users %}
+    {% if item.user.pk != request.user.pk %}
+        <form id="delete-user-{{ item.user.pk }}" method="post" class="d-none">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="user_id" value="{{ item.user.pk }}">
+        </form>
+    {% endif %}
+{% endfor %}
+{% endblock %}

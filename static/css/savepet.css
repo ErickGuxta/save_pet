@@ -1,4 +1,6 @@
 :root {
+    --font-sans: "Nunito Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: "Quicksand", "Nunito Sans", "Segoe UI", system-ui, sans-serif;
     --teal-dark: #0f5f63;
     --teal: #168188;
     --mint: #e8f6f3;
@@ -12,8 +14,30 @@
 
 body.savepet-body {
     min-height: 100vh;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    letter-spacing: 0;
     color: var(--ink);
     background: var(--page);
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.page-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0;
 }
 
 a {
@@ -76,13 +100,26 @@ a {
 }
 
 .brand {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
     color: var(--ink);
-    font-size: 1.2rem;
-    font-weight: 800;
     text-decoration: none;
+}
+
+.brand-logo {
+    width: min(100%, 172px);
+    height: auto;
+    display: block;
+}
+
+.auth-logo {
+    width: 150px;
+    height: auto;
+}
+
+.auth-logo-sm {
+    width: 126px;
 }
 
 .brand-mark,
@@ -119,6 +156,7 @@ a {
 .sidebar-label {
     margin: 0 0 -12px;
     color: var(--muted);
+    font-family: var(--font-display);
     font-size: .75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -139,6 +177,7 @@ a {
     background: transparent;
     border: 0;
     border-radius: 8px;
+    font-family: var(--font-display);
     font-weight: 700;
     text-align: left;
     text-decoration: none;
@@ -162,6 +201,26 @@ a {
 .table-wrap {
     overflow-x: auto;
     border-radius: 8px;
+}
+
+.users-permissions-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.users-permissions-header {
+    padding: 28px;
+    border-bottom: 1px solid var(--line);
+}
+
+.users-permissions-table th,
+.users-permissions-table td {
+    padding: 18px 22px;
+    vertical-align: middle;
+}
+
+.users-permissions-table tbody tr + tr td {
+    border-top: 1px solid var(--line);
 }
 
 .vaccines-table {
@@ -276,6 +335,7 @@ a {
     padding: 9px 18px;
     border-radius: 8px;
     border: 1px solid transparent;
+    font-family: var(--font-display);
     font-weight: 800;
     text-decoration: none;
 }
@@ -369,6 +429,13 @@ dd {
     font-size: 1.7rem;
     font-weight: 800;
     background: var(--teal-dark);
+}
+
+.empty-logo {
+    width: min(220px, 72%);
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 .pet-badge {
@@ -474,6 +541,85 @@ dd {
     object-fit: cover;
 }
 
+.pet-form {
+    display: grid;
+    gap: 24px;
+}
+
+.pet-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+    gap: 24px;
+}
+
+.pet-form-main,
+.pet-form-side {
+    display: grid;
+    gap: 24px;
+}
+
+.pet-form-section {
+    display: grid;
+    gap: 20px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.section-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+}
+
+.pet-form-grid,
+.pet-form-health-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.pet-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pet-form-health-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pet-form-field-wide {
+    grid-column: 1 / -1;
+}
+
+.pet-form-field textarea {
+    min-height: 116px;
+    resize: vertical;
+}
+
+.pet-photo-panel {
+    position: sticky;
+    top: 24px;
+}
+
+.pet-photo-upload {
+    display: grid;
+    gap: 12px;
+}
+
+.pet-photo-upload .photo-placeholder {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    font-size: 4rem;
+}
+
+.pet-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 4px;
+}
+
 @media (max-width: 900px) {
     .app-shell {
         grid-template-columns: 1fr;
@@ -487,6 +633,14 @@ dd {
 
     .main-area {
         padding: 24px 16px;
+    }
+
+    .pet-form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .pet-photo-panel {
+        position: static;
     }
 }
 
@@ -532,5 +686,14 @@ dd {
 
     .pet-info-grid {
         grid-template-columns: 1fr;
+    }
+
+    .pet-form-grid,
+    .pet-form-health-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pet-form-actions {
+        display: grid;
     }
 }
