@@ -4,7 +4,7 @@
 <div class="blog-container">
     <div class="page-header">
         <a class="pet-btn-ghost" href="{% url 'blog:index' %}">← Blog</a>
-        {% if is_admin_sistema %}
+        {% if perms.blog.change_artigoblog %}
             <a href="{% url 'blog:edit' article.id %}" class="pet-btn-secondary">Editar artigo</a>
         {% endif %}
     </div>

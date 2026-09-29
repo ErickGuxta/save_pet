@@ -12,10 +12,14 @@
 </section>
 
 <div class="blog-container py-4">
-    {% if is_admin_sistema %}
+    {% if perms.blog.view_categoria or perms.blog.add_categoria or perms.blog.change_categoria or perms.blog.delete_categoria or perms.blog.add_artigoblog %}
         <div class="d-flex gap-2 flex-wrap mb-4">
-            <a href="{% url 'blog:categories' %}" class="pet-btn-secondary">Categorias</a>
-            <a href="{% url 'blog:create' %}" class="pet-btn-primary">+ Novo artigo</a>
+            {% if perms.blog.view_categoria or perms.blog.add_categoria or perms.blog.change_categoria or perms.blog.delete_categoria %}
+                <a href="{% url 'blog:categories' %}" class="pet-btn-secondary">Categorias</a>
+            {% endif %}
+            {% if perms.blog.add_artigoblog %}
+                <a href="{% url 'blog:create' %}" class="pet-btn-primary">+ Novo artigo</a>
+            {% endif %}
         </div>
     {% endif %}
 
@@ -36,13 +40,17 @@
                             <span class="small text-muted">{{ article.data_publicacao|date:"d M Y" }}</span>
                         </div>
                         <a href="{% url 'blog:detail' article.id %}" class="pet-btn-secondary w-100">Ler mais →</a>
-                        {% if is_admin_sistema %}
+                        {% if perms.blog.change_artigoblog or perms.blog.delete_artigoblog %}
                             <div class="d-flex flex-wrap gap-2 mt-3">
-                                <a href="{% url 'blog:edit' article.id %}" class="pet-btn-ghost">Editar</a>
-                                <form method="post" action="{% url 'blog:delete' article.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="pet-btn-ghost pet-btn-danger">Excluir</button>
-                                </form>
+                                {% if perms.blog.change_artigoblog %}
+                                    <a href="{% url 'blog:edit' article.id %}" class="pet-btn-ghost">Editar</a>
+                                {% endif %}
+                                {% if perms.blog.delete_artigoblog %}
+                                    <form method="post" action="{% url 'blog:delete' article.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="pet-btn-ghost pet-btn-danger">Excluir</button>
+                                    </form>
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>

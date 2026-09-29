@@ -42,9 +42,9 @@
                     <a class="sidebar-link {% if request.resolver_match.namespace == 'blog' %}active{% endif %}" href="{% url 'blog:index' %}">
                         <span>Blog</span>
                     </a>
-                    {% if is_admin_sistema %}
+                    {% if perms.auth.change_user %}
                         <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'users_permissions' %}active{% endif %}" href="{% url 'accounts:users_permissions' %}">
-                            <span>Usuários</span>
+                            <span>Editores do blog</span>
                         </a>
                     {% endif %}
                     <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name != 'dashboard' %}active{% endif %}" href="{% url 'accounts:profile' %}">

@@ -11,8 +11,8 @@ Sistema web desenvolvido com Django para gerenciamento de tutores, pets, registr
 - Registro de vacinas por pet, com data de aplicação e reforço.
 - Dashboard para tutores com resumo de pets, vacinas e artigos recentes.
 - Dashboard administrativo com indicadores gerais do sistema.
-- Controle de permissões para administradores do sistema.
-- Blog com artigos e categorias gerenciados por administradores.
+- Controle de editores do blog por grupo.
+- Blog com artigos e categorias gerenciados por editores do blog.
 
 ## Tecnologias
 
@@ -73,10 +73,26 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-### 5. Crie um superusuário
+### 5. Configure o acesso administrativo
 
-```bash
-python manage.py createsuperuser
+Crie um usuário e marque `is_staff=True` para ele conseguir acessar o painel `/admin/`.
+Não é necessário usar `is_superuser=True` no uso normal do sistema.
+
+Depois, pelo painel `/admin/`, crie e configure os grupos:
+
+- `Dono de pet`
+- `Editor do blog`
+- `Administrador do sistema`
+
+Se precisar fazer o primeiro usuário administrativo sem superuser, use o shell apenas para marcar esse usuário como staff:
+
+```python
+from django.contrib.auth.models import User
+
+user = User.objects.get(username="seu_usuario")
+user.is_staff = True
+user.is_superuser = False
+user.save(update_fields=["is_staff", "is_superuser"])
 ```
 
 ### 6. Inicie o servidor
@@ -102,15 +118,15 @@ http://127.0.0.1:8000/
 
 ## Permissões
 
-O sistema diferencia usuários comuns e administradores.
+O sistema usa permissões e grupos do Django por funcionalidade. As permissões devem ser configuradas pelo painel `/admin/` do Django. O código da aplicação não cria nem sincroniza grupos automaticamente.
 
-Usuários administradores são identificados por:
+Grupos esperados:
 
-- `is_staff=True`
-- `is_superuser=True`
-- participação no grupo `Administrador do sistema`
+- `Dono de pet`: pode visualizar, criar, editar e excluir pets e registros de vacina, além de visualizar artigos do blog.
+- `Editor do blog`: pode visualizar, criar, editar e excluir categorias e artigos do blog.
+- `Administrador do sistema`: pode acessar o dashboard administrativo, a tela simples de editores do blog e o painel `/admin/` para manutenção sensível.
 
-Administradores podem visualizar dados gerais do sistema, gerenciar permissões de usuários, categorias e artigos do blog.
+Use a tela `Editores do blog` da aplicação apenas para conceder ou remover o grupo `Editor do blog` de contas comuns. Para permissões detalhadas, contas `staff`, exclusão de usuários e grupos administrativos, use o painel `/admin/` do Django.
 
 ## Comandos úteis
 

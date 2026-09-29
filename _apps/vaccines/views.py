@@ -13,14 +13,17 @@
 # importando shortcuts para renderização, busca e redirecionamento
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_POST
 
 # importando formulário e model de vacinas
 from .forms  import VaccineForm
 from .models import RegistroVacina
 from _apps.accounts.models import Dono
-from _apps.accounts.permissions import is_admin_sistema
+
+
+def is_admin_sistema(user):
+    return user.is_authenticated and user.has_perm("auth.change_user")
 
 
 
@@ -30,6 +33,7 @@ from _apps.accounts.permissions import is_admin_sistema
 
 # Listar registros de vacinas
 @login_required
+@permission_required("vaccines.view_registrovacina", raise_exception=True)
 def vaccines(request):
     # admin vê todas; tutor comum vê apenas as próprias vacinas
     vaccines = RegistroVacina.objects.select_related("pet")
@@ -46,6 +50,7 @@ def vaccines(request):
 
 # Detalhar vacina
 @login_required
+@permission_required("vaccines.view_registrovacina", raise_exception=True)
 def detail(request, id):
     # admin pode abrir qualquer vacina; tutor comum apenas as próprias
     vaccines_query = RegistroVacina.objects.all()
@@ -64,6 +69,7 @@ def detail(request, id):
 
 # Criar registro de vacina
 @login_required
+@permission_required("vaccines.add_registrovacina", raise_exception=True)
 def create(request):
     # instanciando a metaclasse VaccineForm filtrando pets do usuário logado
     dono = None
@@ -97,6 +103,7 @@ def create(request):
 
 # Editar registro de vacina
 @login_required
+@permission_required("vaccines.change_registrovacina", raise_exception=True)
 def edit(request, id):
 
     # busca a vacina que será editada
@@ -133,6 +140,7 @@ def edit(request, id):
 
 # Excluir registro de vacina
 @login_required
+@permission_required("vaccines.delete_registrovacina", raise_exception=True)
 @require_POST
 def delete(request, id):
     # busca e exclui a vacina informada na URL

@@ -13,14 +13,17 @@
 # importando shortcuts para renderização, busca e redirecionamento
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_POST
 
 # importando formulário e model de pets
 from .forms import PetForm
 from .models import Pet
 from _apps.accounts.models import Dono
-from _apps.accounts.permissions import is_admin_sistema
+
+
+def is_admin_sistema(user):
+    return user.is_authenticated and user.has_perm("auth.change_user")
 
 
 
@@ -30,6 +33,7 @@ from _apps.accounts.permissions import is_admin_sistema
 
 # Listar pets
 @login_required
+@permission_required("pets.view_pet", raise_exception=True)
 def pets(request):
     # admin vê todos; tutor comum vê apenas os próprios pets
     if is_admin_sistema(request.user):
@@ -46,6 +50,7 @@ def pets(request):
 
 # Detalhar pet
 @login_required
+@permission_required("pets.view_pet", raise_exception=True)
 def detail(request, id):
     # admin pode abrir qualquer pet; tutor comum apenas os próprios
     pets_query = Pet.objects.prefetch_related("vacinas")
@@ -64,6 +69,7 @@ def detail(request, id):
 
 # Criar pet
 @login_required
+@permission_required("pets.add_pet", raise_exception=True)
 def create(request):
     # instanciando a metaclasse PetForm
     dono = Dono.objects.filter(pk=request.user.pk).first()
@@ -100,6 +106,7 @@ def create(request):
 
 # Editar pet
 @login_required
+@permission_required("pets.change_pet", raise_exception=True)
 def edit(request, id):
 
     # busca o pet que será editado
@@ -134,6 +141,7 @@ def edit(request, id):
 
 # Excluir pet
 @login_required
+@permission_required("pets.delete_pet", raise_exception=True)
 @require_POST
 def delete(request, id):
     # busca e exclui o pet informado na URL

@@ -4,6 +4,7 @@
 
 # importando forms do Django e formulários prontos de autenticação
 from django                    import forms
+from django.contrib.auth.models import Group
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 from _apps.accounts.models     import Dono
@@ -34,6 +35,14 @@ class PublicUserForm(UserCreationForm):
         # adiciona bootstrap nos campos do formulário
         for field in self.fields.values():
             field.widget.attrs.update({"class": "form-control"})
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if commit:
+            dono_group = Group.objects.filter(name="Dono de pet").first()
+            if dono_group is not None:
+                user.groups.add(dono_group)
+        return user
 
 
 # ============================================================
@@ -73,6 +82,7 @@ class PerfilDonoForm(forms.Form):
         # o user é enviado pela view para carregar os dados já cadastrados
         user = kwargs.pop("user", None)
         dono = kwargs.pop("dono", None)
+        self.dono = dono
         super().__init__(*args, **kwargs)
 
         if user is not None:
@@ -92,3 +102,17 @@ class PerfilDonoForm(forms.Form):
 
         for field in self.fields.values():
             field.widget.attrs.update({"class": "form-control"})
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data["cpf"]
+        if not cpf:
+            return cpf
+
+        donos = Dono.objects.filter(cpf=cpf)
+        if self.dono is not None:
+            donos = donos.exclude(pk=self.dono.pk)
+
+        if donos.exists():
+            raise forms.ValidationError("Este CPF já está cadastrado em outra conta.")
+
+        return cpf

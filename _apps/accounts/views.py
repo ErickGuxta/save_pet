@@ -13,19 +13,25 @@
 # importando mensagens, autenticação e shortcuts do Django
 from django.contrib                 import messages
 from django.contrib.auth            import login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models     import Group, User
-from django.utils                  import timezone
+from django.utils                   import timezone
 from django.views.decorators.http   import require_POST
 from django.shortcuts               import redirect, render
 
 # importando forms de autenticação e cadastro
 from _apps.accounts.forms  import LoginForm, PerfilDonoForm, PublicUserForm
 from _apps.accounts.models import Dono
-from _apps.accounts.permissions import ADMIN_GROUP_NAME, is_admin_sistema
 from _apps.blog.models     import ArtigoBlog, Categoria
 from _apps.pets.models     import Pet
 from _apps.vaccines.models import RegistroVacina
+
+
+BLOG_EDITOR_GROUP_NAME = "Editor do blog"
+
+
+def is_admin_sistema(user):
+    return user.is_authenticated and user.has_perm("auth.change_user")
 
 
 # ============================================================
@@ -78,60 +84,52 @@ def index(request):
 
 
 @login_required
+@permission_required("auth.change_user", raise_exception=True)
 def users_permissions(request):
-    if not is_admin_sistema(request.user):
-        messages.error(request, "Você não tem permissão para gerenciar usuários.")
+    editor_group = Group.objects.filter(name=BLOG_EDITOR_GROUP_NAME).first()
+    if editor_group is None:
+        messages.error(request, "Crie o grupo Editor do blog no painel admin do Django.")
         return redirect("accounts:dashboard")
 
-    admin_group, _ = Group.objects.get_or_create(name=ADMIN_GROUP_NAME)
-
     if request.method == "POST":
-        action = request.POST.get("action")
+        user_id = request.POST.get("user_id")
+        role_action = request.POST.get("role_action")
+        user = User.objects.filter(pk=user_id).first()
 
-        if action == "delete":
-            user_id = request.POST.get("user_id")
-            user = User.objects.filter(pk=user_id).first()
-
-            if user is None:
-                messages.error(request, "Usuário não encontrado.")
-            elif user.pk == request.user.pk:
-                messages.error(request, "Você não pode apagar sua própria conta por esta tela.")
-            else:
-                username = user.username
-                user.delete()
-                messages.success(request, f"Usuário {username} apagado.")
-
+        if user is None:
+            messages.error(request, "Usuário não encontrado.")
             return redirect("accounts:users_permissions")
 
-        admin_user_ids = request.POST.getlist("admin_users")
-        current_user_id = str(request.user.pk)
-
-        if current_user_id not in admin_user_ids and not (
-            request.user.is_staff or request.user.is_superuser
-        ):
-            messages.error(request, "Você não pode remover sua própria permissão de admin.")
+        if user.is_staff or user.is_superuser or is_admin_sistema(user):
+            messages.error(request, "Contas administrativas devem ser gerenciadas pelo painel admin do Django.")
             return redirect("accounts:users_permissions")
 
-        for user in User.objects.all():
-            if str(user.pk) in admin_user_ids:
-                user.groups.add(admin_group)
-            else:
-                user.groups.remove(admin_group)
+        if role_action == "add_editor":
+            user.groups.add(editor_group)
+            messages.success(request, f"{user.username} agora é editor do blog.")
+            return redirect("accounts:users_permissions")
 
-        messages.success(request, "Permissões atualizadas.")
+        if role_action == "remove_editor":
+            user.groups.remove(editor_group)
+            messages.success(request, f"{user.username} não é mais editor do blog.")
+            return redirect("accounts:users_permissions")
+
+        messages.error(request, "Ação inválida.")
         return redirect("accounts:users_permissions")
 
     users = []
     for user in User.objects.prefetch_related("groups").order_by("username"):
+        is_app_admin = is_admin_sistema(user)
         users.append({
             "user": user,
-            "is_app_admin": is_admin_sistema(user),
-            "is_group_admin": user.groups.filter(pk=admin_group.pk).exists(),
+            "is_app_admin": is_app_admin,
+            "is_blog_editor": user.groups.filter(pk=editor_group.pk).exists(),
+            "can_edit_blog_role": not user.is_staff and not user.is_superuser and not is_app_admin,
         })
 
     context = {
         "users": users,
-        "admin_group_name": ADMIN_GROUP_NAME,
+        "admin_group_name": BLOG_EDITOR_GROUP_NAME,
     }
     return render(request, "accounts/users_permissions.html", context)
 

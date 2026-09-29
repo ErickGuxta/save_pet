@@ -7,8 +7,8 @@
     <div>
         <h1 class="page-title">Minha conta</h1>
         <p class="page-subtitle">{{ request.user.email|default:"E-mail não informado" }}</p>
-        {% if is_admin_sistema %}
-            <span class="pet-badge mt-2">Administrador do sistema</span>
+        {% if perms.blog.change_artigoblog %}
+            <span class="pet-badge mt-2">Editor do blog</span>
         {% endif %}
     </div>
     <a href="{% url 'accounts:edit' %}" class="pet-btn-secondary">Editar</a>
