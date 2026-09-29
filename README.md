@@ -2,6 +2,10 @@
 
 Sistema web desenvolvido com Django para gerenciamento de tutores, pets, registros de vacinação e artigos informativos.
 
+## Apresentação
+
+- [Vídeo de apresentação do projeto](https://youtu.be/_DiejM8kky4)
+
 ## Funcionalidades
 
 - Cadastro, login e logout de usuários.
